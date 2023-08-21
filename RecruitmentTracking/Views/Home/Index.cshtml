@@ -25,17 +25,45 @@
 
         @foreach (var job in Model){
         <div class="col">
-          <div class="card h-[350px] w-full">
+          <div class="card h-[250px] w-full">
             <div class="card-header">
               <h5 class="font-medium text-xl">@job.JobTitle</h5>
-                <span class="text-gray-600 flex items-center space-x-1">
-                <i class="bi bi-geo-alt"></i>
-                <h7 class="card-text text-sm">Location: @job.Location</h7>
+              <span class="d-flex">
+                <i class="text-gray-400 bi bi-calendar"></i>
+                &nbsp;
+                <span class="text-gray-400 fs-c-overline">17 Nov 2023</span>
               </span>
               </div>
+              
               <div class="card-body flex flex-column justify-between">
               <div class="card-text">
-                <p class="line-clamp-5"> @job.JobDescription</p>
+                <div class="d-flex me-3">
+                  <span class="text-gray-1000 flex items-center space-x-1">
+                    <i class="bi bi-geo-alt"></i>
+                    <h7 class="card-text text-sm">Location: @job.Location</h7>
+                  </span>
+                </div>
+                
+                <div class= "d-flex me-3">
+                  <i class="bi bi-journal-bookmark"></i>
+                  &nbsp;
+                  <p> D3-S1</p>
+                  <p class="line-clamp-5"> </p>
+                </div>
+                
+                <div class= "d-flex me-3">
+                  <i class="bi bi-briefcase-fill"></i>
+                  &nbsp;
+                  <p> Engineering</p>
+                  <p class="line-clamp-5"> </p>
+                </div>
+                
+                <div class= "d-flex me-3">
+                  <i class="bi bi-clock"></i>
+                  &nbsp;
+                  <p> Full Time</p>
+                  <p class="line-clamp-5"> </p>
+                </div>
               </div>
               @* <div class="flex mt-3 space-x-2"> *@
                 <div class="d-flex mb-0 mt-0 space-x-2">
