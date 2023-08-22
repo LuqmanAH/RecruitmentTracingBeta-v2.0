@@ -58,16 +58,16 @@ public class HomeController : Controller
 		return View(listJob);
 	}
 
-	[HttpGet("/Search")]
-	public async Task<IActionResult> SearchJob(string searchstring)
+	[HttpPost]
+	public async Task<IActionResult> Index(string searchstring)
 	{
 		var jobs = from j in _context.Jobs select j;
 
 		List<JobViewModel> listJob = new();
 
-		if (!String.IsNullOrEmpty(searchstring))
+		if (!string.IsNullOrEmpty(searchstring))
 		{
-			var filteredjobs = jobs.ToList().Where(j => j.JobTitle != null && j.JobTitle.Contains(searchstring, StringComparison.OrdinalIgnoreCase));
+			var filteredjobs = jobs.ToList().Where(j => j.JobTitle != null && j.IsJobAvailable && j.JobTitle.Contains(searchstring, StringComparison.OrdinalIgnoreCase));
 			foreach (var job in filteredjobs)
 			{
 				JobViewModel data = new()
@@ -86,7 +86,7 @@ public class HomeController : Controller
 		else 
 		{
 			// jika seacrhstring kosong, setiap pekerjaan ditampilkan
-			foreach (var job in jobs)
+			foreach (Job job in _context.Jobs!.Where(j => j.IsJobAvailable).ToList())
 			{
 				JobViewModel viewModel = new()
 				{
@@ -101,7 +101,6 @@ public class HomeController : Controller
 				listJob.Add(viewModel);
 			}
 		}
-		System.Console.WriteLine(listJob.Count);
 		return View(listJob);
 	}
 
