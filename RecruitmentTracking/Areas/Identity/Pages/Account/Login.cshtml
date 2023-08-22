@@ -77,10 +77,10 @@
 								<p>
 									@foreach (var provider in Model.ExternalLogins!)
 									{
-											<button type="submit" class="btn text-white bg-amber-500 hover:hover:bg-amber-600 me-2 rounded-lg mt-3" name="provider" value="@provider.Name"
-												title="Log in using your @provider.DisplayName account">
-											Sign in with
-											@provider.DisplayName
+										<button type="submit" class="btn text-black me-2 rounded-lg mt-3" name="provider" value="@provider.Name"
+											title="Log in using your @provider.DisplayName account">
+											<i class="bi bi-google" style="color: orange;"></i>
+											@* @provider.DisplayName *@
 										</button>
 									}
 								</p>
