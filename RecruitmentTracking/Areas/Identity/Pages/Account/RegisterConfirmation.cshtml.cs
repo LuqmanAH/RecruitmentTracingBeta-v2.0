@@ -47,7 +47,7 @@ namespace RecruitmentTracking.Areas.Identity.Pages.Account
         /// </summary>
         public string EmailConfirmationUrl { get; set; }
 
-        /*public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
         {
             if (email == null)
             {
@@ -77,36 +77,7 @@ namespace RecruitmentTracking.Areas.Identity.Pages.Account
             }
 
             return Page();
-        }*/
+        }
 
-		[AllowAnonymous]
-		public async Task<IActionResult> OnGetAsync(string email)
-		{
-			if (email == null)
-			{
-				return RedirectToPage("/Index");
-			}
-
-			var user = await _userManager.FindByEmailAsync(email);
-			if (user == null)
-			{
-				return NotFound($"Unable to load user with email '{email}'.");
-			}
-
-			// Kirim email konfirmasi pendaftaran
-			var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-			var callbackUrl = Url.Page(
-				"/Account/ConfirmEmail",
-				pageHandler: null,
-				values: new { userId = user.Id, code },
-				protocol: Request.Scheme);
-
-			await _emailSender.SendEmailAsync(
-				email,
-				"Confirm Your Email",
-				$"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-			return Page();
-		}
 	}
 }

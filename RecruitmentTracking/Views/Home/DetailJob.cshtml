@@ -14,12 +14,17 @@
         </div>
         <hr/>
         <i class="bi bi-clock text-muted"></i>
-        <h7 class="text-muted">@Model.JobPostedDate</h7>
+        <h7 class="text-muted">Date Posted: @Model.JobPostedDate</h7>
         <div class="my-3">
           <p class="text-base font-bold">Job description</p>
           <p>@Model.JobDescription</p>
           <p class="text-base font-bold">Job requirements</p>
-          <p>@Html.Raw(Model.JobRequirement.Replace(Environment.NewLine, "<br />"))</p>
+          <ul>
+            @foreach (var requirement in Model.JobRequirement.Split("\n", StringSplitOptions.RemoveEmptyEntries))
+            {
+              <li>@requirement</li>
+            }
+          </ul>
         </div>
         <a class="w-full btn bg-amber-500 text-white rounded-lg hover:bg-amber-600" href="@Url.Action("ApplyJob", new { id = Model.JobId })">Apply</a>
       </div>
