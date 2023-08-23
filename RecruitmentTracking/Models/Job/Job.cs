@@ -25,6 +25,13 @@ public class Job
     [DataType(DataType.Date)]
     public DateTime? JobExpiredDate { get; set; }
 
+    [Required]
+    public string? JobMinEducation { get; set; }
+    [Required]
+    public string? JobDepartment { get; set; }
+    [Required]
+    public string? EmploymentType { get; set; }
+
     public int candidateCount { get; set; }
 
     public string? ProcessStatus { get; set; }

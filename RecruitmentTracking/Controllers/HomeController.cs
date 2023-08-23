@@ -1,6 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using Google.Apis.Gmail.v1.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentTracking.Data;
 using RecruitmentTracking.Models;
@@ -48,6 +51,9 @@ public class HomeController : Controller
 				JobDescription = job.JobDescription,
 				JobRequirement = job.JobRequirement,
 				Location = job.Location,
+				JobDepartment = job.JobDepartment,
+				JobMinEducation = job.JobMinEducation,
+				EmploymentType = job.EmploymentType,
 				JobPostedDate = job.JobPostedDate,
 				JobExpiredDate = job.JobExpiredDate,
 				CandidateCout = job.candidateCount,
@@ -58,16 +64,16 @@ public class HomeController : Controller
 		return View(listJob);
 	}
 
-	[HttpGet("/Search")]
-	public async Task<IActionResult> SearchJob(string searchstring)
+	[HttpPost]
+	public async Task<IActionResult> Index(string searchstring, string? chosenLocation = null)
 	{
+		Console.WriteLine("\n\nLOCATION CHOSEN: " + chosenLocation);
 		var jobs = from j in _context.Jobs select j;
-
 		List<JobViewModel> listJob = new();
 
-		if (!String.IsNullOrEmpty(searchstring))
+		if (!string.IsNullOrEmpty(searchstring))
 		{
-			var filteredjobs = jobs.ToList().Where(j => j.JobTitle != null && j.JobTitle.Contains(searchstring, StringComparison.OrdinalIgnoreCase));
+			var filteredjobs = jobs.ToList().Where(j => j.JobTitle != null && j.IsJobAvailable && j.JobTitle.Contains(searchstring, StringComparison.OrdinalIgnoreCase));
 			foreach (var job in filteredjobs)
 			{
 				JobViewModel data = new()
@@ -77,16 +83,25 @@ public class HomeController : Controller
 					JobDescription = job.JobDescription,
 					JobRequirement = job.JobRequirement,
 					Location = job.Location,
+					JobDepartment = job.JobDepartment,
+					JobMinEducation = job.JobMinEducation,
+					EmploymentType = job.EmploymentType,
+					JobPostedDate = job.JobPostedDate,
+					JobExpiredDate = job.JobExpiredDate,
 					CandidateCout = job.candidateCount,
 				};
 
 				listJob.Add(data);
 			}
+			if (chosenLocation != null)
+			{
+				listJob = FilterByLocation(chosenLocation, listJob);
+			}
 		}
 		else 
 		{
 			// jika seacrhstring kosong, setiap pekerjaan ditampilkan
-			foreach (var job in jobs)
+			foreach (Job job in _context.Jobs!.Where(j => j.IsJobAvailable).ToList())
 			{
 				JobViewModel viewModel = new()
 				{
@@ -95,14 +110,32 @@ public class HomeController : Controller
 					JobDescription = job.JobDescription,
 					JobRequirement = job.JobRequirement,
 					Location = job.Location,
+					JobDepartment = job.JobDepartment,
+					JobMinEducation = job.JobMinEducation,
+					EmploymentType = job.EmploymentType,
+					JobPostedDate = job.JobPostedDate,
+					JobExpiredDate = job.JobExpiredDate,
 					CandidateCout = job.candidateCount,
 				};
 				
 				listJob.Add(viewModel);
 			}
+			if (chosenLocation != null)
+			{
+				listJob = FilterByLocation(chosenLocation, listJob);
+			}
 		}
-		System.Console.WriteLine(listJob.Count);
 		return View(listJob);
+	}
+
+	private List<JobViewModel> FilterByLocation (string chosenLocation, List<JobViewModel> listJob)
+	{
+		List<JobViewModel> filterByLocation = new List<JobViewModel>();
+		foreach (var job in listJob)
+		{
+			filterByLocation = listJob.Where(j => j.Location == chosenLocation).ToList();
+		}
+		return filterByLocation;
 	}
 
 	[HttpGet("/DetailJob/{id}")]
