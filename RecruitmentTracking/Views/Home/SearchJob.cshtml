@@ -12,7 +12,26 @@
             <div class="w-full">
                 <input type="text" name="searchstring" value="@searchstring" class="form-control rounded-lg" placeholder="Search Job" aria-label="City" />
             </div>
-            <div class="dropdown w-1/3">
+            <div class="btn-group">
+          <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: white; color: black;">
+            Department
+          </button>
+          <ul class="dropdown-menu">
+          ...
+          </ul>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-sm" type="button" style="background-color: white; color: black;">
+              location
+            </button>
+            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: white; color: black;">
+              <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+              ...
+            </ul>
+          </div>
+            @* <div class="dropdown w-1/3">
             <select class="form-select" aria-label="Default select example">
                 <option selected>Choose location</option>
                 <option value="Bandung">Bandung</option>
@@ -20,6 +39,15 @@
                 <option value="Semarang">Semarang</option>
             </select>
             </div>
+            <div class="dropdown w-1/3">
+            <select class="form-select" aria-label="Default select example">
+                <option selected>Choose location</option>
+                <option value="Bandung">Bandung</option>
+                <option value="Salatiga">Salatiga</option>
+                <option value="Semarang">Semarang</option>
+            </select>
+            </div> *@
+            
             <!-- ... other form elements ... -->
             <button type="submit" class="w-1/3 btn bg-amber-500 text-white hover:bg-amber-600 rounded-lg">Search<i class="bi bi-search mx-2"></i></button>
         </div>
