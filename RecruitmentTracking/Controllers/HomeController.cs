@@ -65,9 +65,10 @@ public class HomeController : Controller
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Index(string searchstring, string? chosenLocation = null)
+	public async Task<IActionResult> Index(string searchstring, string? chosenLocation = null, string? chosenDepartment = null)
 	{
 		Console.WriteLine("\n\nLOCATION CHOSEN: " + chosenLocation);
+		Console.WriteLine("\n\nDEPARTMENT CHOSEN: " + chosenDepartment);
 		var jobs = from j in _context.Jobs select j;
 		List<JobViewModel> listJob = new();
 
@@ -93,9 +94,17 @@ public class HomeController : Controller
 
 				listJob.Add(data);
 			}
-			if (chosenLocation != null)
+			if (!string.IsNullOrEmpty(chosenLocation) && !string.IsNullOrEmpty(chosenDepartment))
+			{
+				listJob = FilterByDepartment(chosenDepartment, FilterByLocation(chosenLocation, listJob));
+			}
+			else if (!string.IsNullOrEmpty(chosenLocation))
 			{
 				listJob = FilterByLocation(chosenLocation, listJob);
+			}
+			else if (!string.IsNullOrEmpty(chosenDepartment))
+			{
+				listJob = FilterByDepartment(chosenDepartment, listJob);
 			}
 		}
 		else 
@@ -120,9 +129,17 @@ public class HomeController : Controller
 				
 				listJob.Add(viewModel);
 			}
-			if (chosenLocation != null)
+			if (!string.IsNullOrEmpty(chosenLocation) && !string.IsNullOrEmpty(chosenDepartment))
+			{
+				listJob = FilterByDepartment(chosenDepartment, FilterByLocation(chosenLocation, listJob));
+			}
+			else if (!string.IsNullOrEmpty(chosenLocation))
 			{
 				listJob = FilterByLocation(chosenLocation, listJob);
+			}
+			else if (!string.IsNullOrEmpty(chosenDepartment))
+			{
+				listJob = FilterByDepartment(chosenDepartment, listJob);
 			}
 		}
 		return View(listJob);
@@ -136,6 +153,16 @@ public class HomeController : Controller
 			filterByLocation = listJob.Where(j => j.Location == chosenLocation).ToList();
 		}
 		return filterByLocation;
+	}
+
+	private List<JobViewModel> FilterByDepartment (string chosenDepartment, List<JobViewModel> listJob)
+	{
+		List<JobViewModel> filterByDepartment = new List<JobViewModel>();
+		foreach (var job in listJob)
+		{
+			filterByDepartment = listJob.Where(j => j.JobDepartment == chosenDepartment).ToList();
+		}
+		return filterByDepartment;
 	}
 
 	[HttpGet("/DetailJob/{id}")]
