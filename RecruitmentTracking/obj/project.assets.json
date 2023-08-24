@@ -12336,19 +12336,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\dell1\\.nuget\\packages\\": {}
+    "C:\\Users\\Vezsh\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\dell1\\OneDrive\\Documents\\RecruitmentTracingBeta-v1.0\\RecruitmentTracking\\RecruitmentTracking.csproj",
+      "projectUniqueName": "c:\\Users\\Vezsh\\Desktop\\Project Team\\RecruitmentTracingBeta-v2.0\\RecruitmentTracking\\RecruitmentTracking.csproj",
       "projectName": "RecruitmentTracking",
-      "projectPath": "c:\\Users\\dell1\\OneDrive\\Documents\\RecruitmentTracingBeta-v1.0\\RecruitmentTracking\\RecruitmentTracking.csproj",
-      "packagesPath": "C:\\Users\\dell1\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\dell1\\OneDrive\\Documents\\RecruitmentTracingBeta-v1.0\\RecruitmentTracking\\obj\\",
+      "projectPath": "c:\\Users\\Vezsh\\Desktop\\Project Team\\RecruitmentTracingBeta-v2.0\\RecruitmentTracking\\RecruitmentTracking.csproj",
+      "packagesPath": "C:\\Users\\Vezsh\\.nuget\\packages\\",
+      "outputPath": "c:\\Users\\Vezsh\\Desktop\\Project Team\\RecruitmentTracingBeta-v2.0\\RecruitmentTracking\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\dell1\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Vezsh\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
@@ -12452,7 +12452,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }
