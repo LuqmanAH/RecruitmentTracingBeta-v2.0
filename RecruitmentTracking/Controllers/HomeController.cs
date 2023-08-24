@@ -160,7 +160,14 @@ public class HomeController : Controller
 		}
 		if (listJob.Count == 0)
 		{
-			ViewBag.Message = $"no results found for \"{searchString}\"";
+			if (string.IsNullOrEmpty(searchString))
+			{
+				ViewBag.Message = $"no results found for the chosen categories";
+			}
+			else
+			{
+				ViewBag.Message = $"no results found for \"{searchString}\"";
+			}
 		}
 		return View(listJob);
 	}
