@@ -10,24 +10,7 @@
         <div class="w-full">
           <input type="text" name="searchstring" value="@Context.Request.Query["searchstring"]" class="form-control rounded-lg" placeholder="Search Job" aria-label="City"/>
         </div>
-        @* <div class="btn-group">
-          <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: white; color: rgb(40, 39, 39);">
-            Department
-          </button>
-          <ul class="dropdown-menu">
-          ...
-          </ul>
-          </div>
-          <div class="btn-group">
-            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: white; color: rgb(40, 39, 39);">
-              Location
-            </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Bandung</a></li>
-            <li><a class="dropdown-item" href="#">Semarang</a></li>
-            <li><a class="dropdown-item" href="#">Salatiga</a></li>
-          </ul>
-          </div> *@
+        
         <div class="dropdown w-1/3">
           <select name="chosenDepartment" class="form-select" aria-label="Default select example">
             <option value = "" selected style="color: rgb(200, 193, 193);"> Choose Departemen</option>
@@ -37,6 +20,7 @@
             <option value="Sales / Marketing">Sales / Marketing</option>
           </select>
         </div>
+
         <div class="dropdown w-1/3">
           <select name="chosenLocation" class="form-select" aria-label="Default select example">
             <option value="" selected style="color: rgb(200, 193, 193);">Choose Location</option>
@@ -45,6 +29,7 @@
             <option value="Semarang">Semarang</option>
           </select>
         </div>
+
         <button type="submit" class="w-1/3 btn bg-amber-500 text-white hover:bg-amber-600 rounded-lg">Search<i
             class="bi bi-search mx-2"></i></i></button>
       </div>
@@ -53,8 +38,8 @@
 
     <!-- top jobs --> 
     <div class="container mb-3 ms-5">
-      <h4 class="font-medium text-2xl mt-5">Opportunities</h4>
-      <h5>See our available opportunities below</h5>
+      <h4 class="font-medium text-2xl mt-5">@ViewBag.Subtitle</h4>
+      <h5>@ViewBag.Message</h5>
       <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
 
         @foreach (var job in Model)

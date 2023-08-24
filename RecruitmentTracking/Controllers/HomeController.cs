@@ -41,6 +41,8 @@ public class HomeController : Controller
 			}
 		}
 
+		ViewBag.Subtitle = "Opportunities";
+		ViewBag.Message = "See our available opportunities below";
 		List<JobViewModel> listJob = new();
 		foreach (Job job in _context.Jobs!.Where(j => j.IsJobAvailable).ToList())
 		{
@@ -65,16 +67,19 @@ public class HomeController : Controller
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Index(string searchstring, string? chosenLocation = null, string? chosenDepartment = null)
+	public async Task<IActionResult> Index(string searchString, string? chosenLocation = null, string? chosenDepartment = null)
 	{
 		Console.WriteLine("\n\nLOCATION CHOSEN: " + chosenLocation);
 		Console.WriteLine("\n\nDEPARTMENT CHOSEN: " + chosenDepartment);
 		var jobs = from j in _context.Jobs select j;
 		List<JobViewModel> listJob = new();
 
-		if (!string.IsNullOrEmpty(searchstring))
+		if (!string.IsNullOrEmpty(searchString))
 		{
-			var filteredjobs = jobs.ToList().Where(j => j.JobTitle != null && j.IsJobAvailable && j.JobTitle.Contains(searchstring, StringComparison.OrdinalIgnoreCase));
+			ViewBag.Subtitle = "Search results";
+			ViewBag.Message = $"Viewing jobs for \"{searchString}\"";
+
+			var filteredjobs = jobs.ToList().Where(j => j.JobTitle != null && j.IsJobAvailable && j.JobTitle.Contains(searchString, StringComparison.OrdinalIgnoreCase));
 			foreach (var job in filteredjobs)
 			{
 				JobViewModel data = new()
@@ -96,20 +101,25 @@ public class HomeController : Controller
 			}
 			if (!string.IsNullOrEmpty(chosenLocation) && !string.IsNullOrEmpty(chosenDepartment))
 			{
+				ViewBag.Message += $" in {chosenLocation} and {chosenDepartment} Department";
 				listJob = FilterByDepartment(chosenDepartment, FilterByLocation(chosenLocation, listJob));
 			}
 			else if (!string.IsNullOrEmpty(chosenLocation))
 			{
+				ViewBag.Message += $" in {chosenLocation}";
 				listJob = FilterByLocation(chosenLocation, listJob);
 			}
 			else if (!string.IsNullOrEmpty(chosenDepartment))
 			{
+				ViewBag.Message = $" in {chosenDepartment} Department";
 				listJob = FilterByDepartment(chosenDepartment, listJob);
 			}
 		}
 		else 
 		{
 			// jika seacrhstring kosong, setiap pekerjaan ditampilkan
+			ViewBag.Subtitle = "Opportunities";
+			ViewBag.Message = "See our available opportunities below";
 			foreach (Job job in _context.Jobs!.Where(j => j.IsJobAvailable).ToList())
 			{
 				JobViewModel viewModel = new()
@@ -131,16 +141,26 @@ public class HomeController : Controller
 			}
 			if (!string.IsNullOrEmpty(chosenLocation) && !string.IsNullOrEmpty(chosenDepartment))
 			{
+				ViewBag.Subtitle = "Search results";
+				ViewBag.Message = $"Filtered jobs in: {chosenLocation} and {chosenDepartment} Department";
 				listJob = FilterByDepartment(chosenDepartment, FilterByLocation(chosenLocation, listJob));
 			}
 			else if (!string.IsNullOrEmpty(chosenLocation))
 			{
+				ViewBag.Subtitle = "Search results";
+				ViewBag.Message = $"Filtered jobs in: {chosenLocation}";
 				listJob = FilterByLocation(chosenLocation, listJob);
 			}
 			else if (!string.IsNullOrEmpty(chosenDepartment))
 			{
+				ViewBag.Subtitle = "Search results";
+				ViewBag.Message = $"Filtered jobs in: {chosenDepartment} Department";
 				listJob = FilterByDepartment(chosenDepartment, listJob);
 			}
+		}
+		if (listJob.Count == 0)
+		{
+			ViewBag.Message = $"no results found for \"{searchString}\"";
 		}
 		return View(listJob);
 	}
