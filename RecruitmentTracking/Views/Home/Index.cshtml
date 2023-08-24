@@ -48,12 +48,12 @@
           <div class="card h-[250px] w-full">
             
             <div class="card-header">
-              <h5 class="font-medium text-xl">@job.JobTitle</h5>
+              <h5 class="font-medium text-xl"> @job.JobTitle</h5>
               <div class="d-flex me-3">
                 <span class="text-gray-400 flex items-center space-x-1">
                 <i class="text-gray-400 bi bi-calendar"></i>
                 &nbsp;
-                <h7 class="card-text text-sm">@job.JobPostedDate</h7>
+                <h7 class="card-text text-sm"> @job.JobPostedDate?.ToString("dd-MMM-yyy")</h7>
               </span>
               </div>
               </div>
@@ -61,17 +61,17 @@
               <div class="card-body flex flex-column justify-between">
               <div class="card-text">
                 <div class="d-flex me-3">
-                  <span class="text-gray-1000 flex items-center space-x-1">
-                    <i class="bi bi-geo-alt"></i>
+                  <span>
+                    <a class="bi bi-geo-alt"> @job.Location</a>
                     &nbsp;
-                    <h7 class="card-text text-sm">@job.Location</h7>
+                    <p class="line-clamp-5"></p>
                   </span>
                 </div>
                 
                 <div class= "d-flex me-3">
                   <i class="bi bi-journal-bookmark"></i>
                   &nbsp;
-                  <p>@job.JobMinEducation</p>
+                  <p> @job.JobMinEducation</p>
                   <p class="line-clamp-5"></p>
                 </div>
                 
