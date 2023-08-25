@@ -72,6 +72,7 @@ public class HomeController : Controller
 				EmploymentType = job.EmploymentType,
 				JobPostedDate = job.JobPostedDate,
 				JobExpiredDate = job.JobExpiredDate,
+				Department = job.Department,
 				CandidateCout = job.candidateCount,
 			};
 
@@ -121,6 +122,7 @@ public class HomeController : Controller
 					EmploymentType = job.EmploymentType,
 					JobPostedDate = job.JobPostedDate,
 					JobExpiredDate = job.JobExpiredDate,
+					Department = job.Department,
 					CandidateCout = job.candidateCount,
 				};
 
@@ -161,6 +163,7 @@ public class HomeController : Controller
 					EmploymentType = job.EmploymentType,
 					JobPostedDate = job.JobPostedDate,
 					JobExpiredDate = job.JobExpiredDate,
+					Department = job.Department,
 					CandidateCout = job.candidateCount,
 				};
 				
