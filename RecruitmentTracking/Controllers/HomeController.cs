@@ -43,6 +43,20 @@ public class HomeController : Controller
 
 		ViewBag.Subtitle = "Opportunities";
 		ViewBag.Message = "See our available opportunities below";
+
+		List<Department> jobDepartments = new List<Department>();
+		foreach (Department department in _context.Departments!.ToList())
+		{
+			Department dept = new()
+			{
+				DepartmentId = department.DepartmentId,
+				DepartmentName = department.DepartmentName
+			};
+			jobDepartments.Add(dept);
+		}
+
+		ViewBag.Departments = jobDepartments;
+
 		List<JobViewModel> listJob = new();
 		foreach (Job job in _context.Jobs!.Where(j => j.IsJobAvailable).ToList())
 		{
@@ -73,6 +87,19 @@ public class HomeController : Controller
 		Console.WriteLine("\n\nDEPARTMENT CHOSEN: " + chosenDepartment);
 		var jobs = from j in _context.Jobs select j;
 		List<JobViewModel> listJob = new();
+
+		List<Department> jobDepartments = new List<Department>();
+		foreach (Department department in _context.Departments!.ToList())
+		{
+			Department dept = new()
+			{
+				DepartmentId = department.DepartmentId,
+				DepartmentName = department.DepartmentName
+			};
+			jobDepartments.Add(dept);
+		}
+
+		ViewBag.Departments = jobDepartments;
 
 		if (!string.IsNullOrEmpty(searchString))
 		{

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecruitmentTracking.Data;
 
@@ -10,9 +11,11 @@ using RecruitmentTracking.Data;
 namespace RecruitmentTracking.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230824223619_AddNewJobColumns")]
+    partial class AddNewJobColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
@@ -180,20 +183,6 @@ namespace RecruitmentTracking.Migrations
                     b.ToTable("Candidates");
                 });
 
-            modelBuilder.Entity("RecruitmentTracking.Models.Department", b =>
-                {
-                    b.Property<int>("DepartmentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DepartmentName")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("DepartmentId");
-
-                    b.ToTable("Departments");
-                });
-
             modelBuilder.Entity("RecruitmentTracking.Models.Job", b =>
                 {
                     b.Property<int>("JobId")
@@ -202,9 +191,6 @@ namespace RecruitmentTracking.Migrations
 
                     b.Property<string>("AdminId")
                         .HasColumnType("TEXT");
-
-                    b.Property<int?>("DeptId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("EmailHR")
                         .HasColumnType("TEXT");
@@ -269,8 +255,6 @@ namespace RecruitmentTracking.Migrations
                     b.HasKey("JobId");
 
                     b.HasIndex("AdminId");
-
-                    b.HasIndex("DeptId");
 
                     b.ToTable("Jobs");
                 });
@@ -459,12 +443,6 @@ namespace RecruitmentTracking.Migrations
                     b.HasOne("RecruitmentTracking.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("AdminId");
-
-                    b.HasOne("RecruitmentTracking.Models.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DeptId");
-
-                    b.Navigation("Department");
 
                     b.Navigation("User");
                 });

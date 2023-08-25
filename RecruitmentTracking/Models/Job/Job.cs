@@ -46,5 +46,7 @@ public class Job
 
     [ForeignKey("User")]
     public string? AdminId { get; set; }
+    [ForeignKey("DeptId")]
+    public Department? Department{ get; set; }
     public User? User { get; set; }
 }
