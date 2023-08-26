@@ -152,8 +152,7 @@ public class AdminController : Controller
 		}
 
 		ViewBag.AdminName = user.Name;
-		List<SelectListItem> departments = GetAvailableDepartments(_context);
-		ViewBag.Departments = departments;
+		ViewBag.Departments = GetAvailableDepartments(_context);
 		return View();
 	}
 
@@ -203,6 +202,7 @@ public class AdminController : Controller
 		}
 
 		ViewBag.AdminName = user.Name;
+		ViewBag.Departments = GetAvailableDepartments(_context);
 
 		Job objJob = (await _context.Jobs!.FindAsync(id))!;
 
@@ -212,6 +212,9 @@ public class AdminController : Controller
 			JobTitle = objJob.JobTitle,
 			JobDescription = objJob.JobDescription,
 			JobRequirement = objJob.JobRequirement!.Replace("\r\n", "\n"),
+			JobDepartment = objJob.JobDepartment,
+			JobMinEducation = objJob.JobMinEducation,
+			EmploymentType = objJob.EmploymentType,
 			Location = objJob.Location,
 			JobPostedDate = objJob.JobPostedDate,
 			JobExpiredDate = objJob.JobExpiredDate,
@@ -235,6 +238,10 @@ public class AdminController : Controller
 		updateJob.JobDescription = objJob.JobDescription;
 		updateJob.JobExpiredDate = objJob.JobExpiredDate;
 		updateJob.JobRequirement = objJob.JobRequirement;
+		updateJob.JobDepartment = objJob.JobDepartment;
+		updateJob.Department = _context.Departments.FirstOrDefault(x => x.DepartmentName == objJob.JobDepartment);
+		updateJob.JobMinEducation = objJob.JobMinEducation;
+		updateJob.EmploymentType = objJob.EmploymentType;
 		updateJob.Location = objJob.Location;
 
 		await _context.SaveChangesAsync();
