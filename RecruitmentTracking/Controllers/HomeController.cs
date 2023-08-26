@@ -73,7 +73,7 @@ public class HomeController : Controller
 				JobPostedDate = job.JobPostedDate,
 				JobExpiredDate = job.JobExpiredDate,
 				Department = job.Department,
-				CandidateCout = job.candidateCount,
+				CandidateCout = job.CandidateCount,
 			};
 
 			listJob.Add(data);
@@ -123,7 +123,7 @@ public class HomeController : Controller
 					JobPostedDate = job.JobPostedDate,
 					JobExpiredDate = job.JobExpiredDate,
 					Department = job.Department,
-					CandidateCout = job.candidateCount,
+					CandidateCout = job.CandidateCount,
 				};
 
 				listJob.Add(data);
@@ -164,7 +164,7 @@ public class HomeController : Controller
 					JobPostedDate = job.JobPostedDate,
 					JobExpiredDate = job.JobExpiredDate,
 					Department = job.Department,
-					CandidateCout = job.candidateCount,
+					CandidateCout = job.CandidateCount,
 				};
 				
 				listJob.Add(viewModel);

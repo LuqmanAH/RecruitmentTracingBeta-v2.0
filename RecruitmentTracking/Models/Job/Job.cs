@@ -32,7 +32,7 @@ public class Job
     [Required]
     public string? EmploymentType { get; set; }
 
-    public int candidateCount { get; set; }
+    public int CandidateCount { get; set; }
 
     public string? ProcessStatus { get; set; }
 
@@ -46,7 +46,7 @@ public class Job
 
     [ForeignKey("User")]
     public string? AdminId { get; set; }
-    [ForeignKey("DeptId")]
+    [ForeignKey("DepartmentId")]
     public Department? Department{ get; set; }
     public User? User { get; set; }
 }

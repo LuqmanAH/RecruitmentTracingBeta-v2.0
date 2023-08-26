@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 using RecruitmentTracking.Models;
 using RecruitmentTracking.Data;
@@ -26,6 +27,17 @@ public class AdminController : Controller
 		_userManager = userManager;
 	}
 
+	private List<SelectListItem> GetAvailableDepartments(ApplicationDbContext context)
+	{
+		List<SelectListItem> jobDepartments = new ();
+		foreach (Department dept in context.Departments!.ToList())
+		{
+			var selectItem = new SelectListItem{Value = $"{dept.DepartmentName}", Text = $"{dept.DepartmentName}"};
+			jobDepartments.Add(selectItem);
+		}
+		return jobDepartments;
+	}
+
 	[HttpGet]
 	public async Task<IActionResult> Index()
 	{
@@ -35,7 +47,7 @@ public class AdminController : Controller
 		foreach (Job job in listObjJob)
 		{
 			int candidateCount = _context.UserJobs!.Where(c => c.JobId == job.JobId).Count();
-			job.candidateCount = candidateCount;
+			job.CandidateCount = candidateCount;
 			JobViewModel modelView = new()
 			{
 				JobId = job.JobId,
@@ -78,7 +90,7 @@ public class AdminController : Controller
 				Location = job.Location,
 				JobPostedDate = job.JobPostedDate,
 				JobExpiredDate = job.JobExpiredDate,
-				CandidateCout = job.candidateCount,
+				CandidateCout = job.CandidateCount,
 			};
 			listJob.Add(data);
 		}
@@ -140,7 +152,8 @@ public class AdminController : Controller
 		}
 
 		ViewBag.AdminName = user.Name;
-
+		List<SelectListItem> departments = GetAvailableDepartments(_context);
+		ViewBag.Departments = departments;
 		return View();
 	}
 
@@ -161,6 +174,7 @@ public class AdminController : Controller
 			JobExpiredDate = objJob.JobExpiredDate,
 			JobRequirement = objJob.JobRequirement!.Replace("\r\n", "\n"),
 			JobDepartment = objJob.JobDepartment,
+			Department = _context.Departments.FirstOrDefault(x => x.DepartmentName == objJob.JobDepartment),
 			JobMinEducation = objJob.JobMinEducation,
 			EmploymentType = objJob.EmploymentType,
 			JobPostedDate = DateTime.Today,
@@ -168,6 +182,9 @@ public class AdminController : Controller
 			IsJobAvailable = true,
 			User = user,
 		};
+
+		// newJob.Department = _context.Departments.FirstOrDefault(x => x.)
+
 		_context.Jobs!.Add(newJob);
 		await _context.SaveChangesAsync();
 
