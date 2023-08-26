@@ -12,6 +12,6 @@ public class JobViewModel
     public string? EmploymentType { get; set; }
     public DateTime? JobPostedDate { get; set; }
     public DateTime? JobExpiredDate { get; set; }
-
+    public Department? Department{ get; set; }
     public int CandidateCout { get; set; }
 }

@@ -26,6 +26,7 @@ public class JobCreate
     
 
     public string? Location { get; set; }
+    public Department? Department{ get; set; }
     public DateTime? JobExpiredDate { get; set; }
 
 }

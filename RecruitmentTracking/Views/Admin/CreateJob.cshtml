@@ -16,7 +16,8 @@
         new SelectListItem { Value = "IT", Text = "IT" },
         new SelectListItem { Value = "Sales / Marketing", Text = "Sales / Marketing" }
     };
-     var dropdownOptionsMinEducation = new List<SelectListItem>
+    var departmentDropdown = ViewBag.Department as List<SelectListItem>;
+    var dropdownOptionsMinEducation = new List<SelectListItem>
     {
         new SelectListItem{ Value = "High School Degree", Text = "High School Degree" },
         new SelectListItem{ Value = "Bachelor Degree", Text = "Bachelor Degree" },
@@ -78,7 +79,7 @@
 
                 <div class="mb-3">
                     <label for="JobRequirement" class="form-label">Department</label>  
-                    @Html.DropDownListFor(m => m.JobDepartment, new SelectList(dropdownOptionsDepartment, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
+                    @Html.DropDownListFor(m => m.JobDepartment, new SelectList(ViewBag.Departments, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
                 </div>
 
                 <div class="mb-3">

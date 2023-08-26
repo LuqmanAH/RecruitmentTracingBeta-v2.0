@@ -14,7 +14,7 @@
         </div>
         <hr/>
         <i class="bi bi-clock text-muted"></i>
-        <h7 class="text-muted">Date Posted: @Model.JobPostedDate</h7>
+        <h7 class="text-muted">Date Posted: @Model.JobPostedDate?.ToString("dd MMM yyy")</h7>
         <div class="my-3">
           <p class="text-base font-bold">Job description</p>
           <p>@Model.JobDescription</p>

@@ -168,7 +168,7 @@ public class CandidateController : Controller
             StatusInJob = $"{ProcessType.Administration}",
         };
 
-        objJob.candidateCount++;
+        objJob.CandidateCount++;
         await _context.UserJobs!.AddAsync(objCJ);
         await _context.SaveChangesAsync();
 
