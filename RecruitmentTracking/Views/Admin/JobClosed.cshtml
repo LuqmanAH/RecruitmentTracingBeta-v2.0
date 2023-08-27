@@ -44,7 +44,7 @@
                                 <input type="hidden" name="id" value= @item.JobId />
                                 <button class="btn bg-blue-500 text-white hover:bg-blue-600 rounded-lg me-2" type="submit">Activate</button>
                             </form>
-                            <form action="/Admin/CloseTheJob" method="get" onsubmit="return confirm('Are you sure you want to delete the job?')">
+                            <form action="/Admin/DeleteJob" method="post" onsubmit="return confirm('Are you sure you want to delete the job?')">
                                 <input type="hidden" name="id" value= @item.JobId />
                                 <button class="btn bg-red-500 text-white hover:bg-red-600 rounded-lg" type="submit">Delete</button>
                             </form>
