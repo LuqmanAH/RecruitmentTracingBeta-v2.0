@@ -399,3 +399,28 @@ FodyWeavers.xsd
 
 # misc folder
 .misc/
+.vscode/settings.json
+RecruitmentTracking/Data/Database.db
+RecruitmentTracking/bin/Debug/net7.0/RecruitmentTracking.dll
+RecruitmentTracking/bin/Debug/net7.0/RecruitmentTracking.exe
+RecruitmentTracking/bin/Debug/net7.0/RecruitmentTracking.pdb
+RecruitmentTracking/bin/Debug/net7.0/RecruitmentTracking.staticwebassets.runtime.json
+RecruitmentTracking/obj/project.assets.json
+RecruitmentTracking/obj/project.nuget.cache
+RecruitmentTracking/obj/RecruitmentTracking.csproj.nuget.dgspec.json
+RecruitmentTracking/obj/RecruitmentTracking.csproj.nuget.g.props
+RecruitmentTracking/obj/Debug/net7.0/apphost.exe
+RecruitmentTracking/obj/Debug/net7.0/RecruitmentTracking.assets.cache
+RecruitmentTracking/obj/Debug/net7.0/RecruitmentTracking.csproj.AssemblyReference.cache
+RecruitmentTracking/obj/Debug/net7.0/RecruitmentTracking.csproj.CoreCompileInputs.cache
+RecruitmentTracking/obj/Debug/net7.0/RecruitmentTracking.csproj.FileListAbsolute.txt
+RecruitmentTracking/obj/Debug/net7.0/RecruitmentTracking.dll
+RecruitmentTracking/obj/Debug/net7.0/RecruitmentTracking.GeneratedMSBuildEditorConfig.editorconfig
+RecruitmentTracking/obj/Debug/net7.0/RecruitmentTracking.genruntimeconfig.cache
+RecruitmentTracking/obj/Debug/net7.0/RecruitmentTracking.pdb
+RecruitmentTracking/obj/Debug/net7.0/staticwebassets.build.json
+RecruitmentTracking/obj/Debug/net7.0/staticwebassets.development.json
+RecruitmentTracking/obj/Debug/net7.0/staticwebassets.pack.json
+RecruitmentTracking/obj/Debug/net7.0/ref/RecruitmentTracking.dll
+RecruitmentTracking/obj/Debug/net7.0/refint/RecruitmentTracking.dll
+RecruitmentTracking/obj/Debug/net7.0/staticwebassets/msbuild.RecruitmentTracking.Microsoft.AspNetCore.StaticWebAssets.props
