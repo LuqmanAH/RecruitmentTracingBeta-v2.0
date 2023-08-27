@@ -75,9 +75,9 @@ else
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
-	MinimumSameSitePolicy = SameSiteMode.Unspecified,
-	HttpOnly = HttpOnlyPolicy.None,
-	Secure = CookieSecurePolicy.None
+	MinimumSameSitePolicy = SameSiteMode.None,
+	HttpOnly = HttpOnlyPolicy.Always,
+	Secure = CookieSecurePolicy.Always
 });
 
 app.UseHttpsRedirection();
