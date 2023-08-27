@@ -48,7 +48,14 @@
           <div class="card h-[250px] w-full">
             
             <div class="card-header">
-              <h5 class="font-medium text-xl"> @job.JobTitle</h5>
+              <a class="card-title btn btn-outline-primary list-inline-item font-bold text-xl" style="border: none; padding: 2px; border-radius: 5px"
+                  href="@Url.Action("DetailJob", new { id = job.JobId })">
+                  @job.JobTitle
+              </a>
+              @* <a type="button" class="btn border-1 border-amber-500 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white" 
+                href="@Url.Action("DetailJob", new { id = job.JobId })"> 
+                @job.JobTitle
+                </a> *@
               <div class="d-flex me-3">
                 <span class="text-gray-400 flex items-center space-x-1">
                 <i class="text-gray-400 bi bi-calendar"></i>
@@ -91,13 +98,13 @@
               </div>
               @* <div class="flex mt-3 space-x-2"> *@
                 <div class="d-flex mb-0 mt-0 space-x-2">
-                <span class="me-auto p-2 space-x-1 items-center">
-                <i class="bi bi-person"></i>
-                <h7 class="card-text">Total Applicant : @job.CandidateCout</h7>
-                </span>
-                  <a type="button" class="btn bg-amber-500 text-white rounded-lg hover:bg-amber-600" href="@Url.Action("ApplyJob", new { id =job.JobId })">Apply</a>
+                  <span class="me-auto p-2 space-x-1 items-center">
+                    <i class="bi bi-person"></i>
+                    <h7 class="card-text">Total Applicant : @job.CandidateCout</h7>
+                  </span>
+                    @* <a type="button" class="btn bg-amber-500 text-white rounded-lg hover:bg-amber-600" href="@Url.Action("ApplyJob", new { id =job.JobId })">Apply</a> *@
                 <a type="button" class="btn border-1 border-amber-500 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white" href="@Url.Action("DetailJob", new { id = job.JobId })" >Details</a>
-              </div>
+                </div>
             </div>
             </div>
           </div>
