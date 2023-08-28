@@ -16,7 +16,8 @@
         new SelectListItem { Value = "IT", Text = "IT" },
         new SelectListItem { Value = "Sales / Marketing", Text = "Sales / Marketing" }
     };
-     var dropdownOptionsMinEducation = new List<SelectListItem>
+    var departmentDropdown = ViewBag.Department as List<SelectListItem>;
+    var dropdownOptionsMinEducation = new List<SelectListItem>
     {
         new SelectListItem{ Value = "High School Degree", Text = "High School Degree" },
         new SelectListItem{ Value = "Bachelor Degree", Text = "Bachelor Degree" },
@@ -34,7 +35,7 @@
 
 <main class="container flex-1 bg-gray-100 p-8 mt-5">
     <div class="flex items-center justify-center">
-        <h1 class="text-2xl font-bold">Create Job</h1>
+        <h1 class="text-2xl font-bold font-family: Arial Helvetica sans-serif">CREATE JOB</h1>
     </div>
 
     <div class="col-span-4">
@@ -78,7 +79,7 @@
 
                 <div class="mb-3">
                     <label for="JobRequirement" class="form-label">Department</label>  
-                    @Html.DropDownListFor(m => m.JobDepartment, new SelectList(dropdownOptionsDepartment, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
+                    @Html.DropDownListFor(m => m.JobDepartment, new SelectList(ViewBag.Departments, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
                 </div>
 
                 <div class="mb-3">

@@ -1,5 +1,10 @@
 ﻿@page
 @model ExternalLoginModel
+
+<br>
+<br>
+<br>
+<br>
 @{
     ViewData["Title"] = "Register";
 }
@@ -11,17 +16,16 @@
 <p><br></p>
 <p><br></p>
 <p><br></p>
-<p><br></p>
-<p><br></p>
 
-<p id="external-login-description" class="text-info" style="text-align: center;">
+<p id="external-login-description" class="text-dark" style="text-align: center;">
     You&apos;ve successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
 </p>
-<p class="text-info" style="text-align: center;">
+<p class="text-dark" style="text-align: center;">
     Please enter an email address for this site below and click the Register button to finish logging in.
 </p>
+<br>
 
-<div class="row">
+<div class="row" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
     <div class="col-md-4" style="text-align: center;">
         <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post"style="text-align: center;">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
@@ -30,8 +34,9 @@
                 <label asp-for="Input.Email" class="form-label"></label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary" style="text-align: center;" >Register</button>
+            <button type="submit" class="w-100 btn btn-lg custom-btn btn-warning btn-primary" style="text-align: center;">Register</button>
         </form>
+        <br>
     </div>
 </div>
 

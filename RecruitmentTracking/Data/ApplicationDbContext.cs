@@ -19,4 +19,5 @@ public class ApplicationDbContext : IdentityDbContext<User>
 	public DbSet<Job>? Jobs { get; set; }
 	public DbSet<UserJob>? UserJobs { get; set; }
 	public DbSet<Candidate> Candidates { get; set; }
+	public DbSet<Department> Departments { get; set; }
 }
