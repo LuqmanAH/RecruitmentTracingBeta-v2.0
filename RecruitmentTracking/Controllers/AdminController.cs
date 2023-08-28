@@ -176,7 +176,7 @@ public class AdminController : Controller
 			Department = _context.Departments.FirstOrDefault(x => x.DepartmentName == objJob.JobDepartment),
 			JobMinEducation = objJob.JobMinEducation,
 			EmploymentType = objJob.EmploymentType,
-			JobPostedDate = DateTime.Today,
+			JobPostedDate = DateTime.Now,
 			Location = objJob.Location,
 			IsJobAvailable = true,
 			User = user,
@@ -416,6 +416,54 @@ public class AdminController : Controller
 		await _context.SaveChangesAsync();
 
 		return Redirect($"/Admin/RecruitmentProcess/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> SaveRejectionEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailReject = objEmailTemplate.EmailReject;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "Rejection Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> SaveHREmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailHR = objEmailTemplate.EmailHR;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "HR Interview Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> SaveUserEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailUser = objEmailTemplate.EmailUser;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "User Interview Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+	
+	[HttpPost]
+	public async Task<IActionResult> SaveOfferEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailOffering = objEmailTemplate.EmailOffering;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "Offering Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
 	}
 
 	[HttpPost]

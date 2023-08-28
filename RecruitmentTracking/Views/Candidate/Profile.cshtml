@@ -28,7 +28,7 @@
 
                 <div class="mt-2">
                     <label for="phone" class="form-label text-muted">Phone Number</label>
-                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control rounded-lg", type="number"})
+                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control rounded-lg", type="tel", pattern = "[0-9]{10,}", title = "Please enter a valid 10-digit phone number"})
                 </div>
                 <div class="mt-2">
                     <label for="education" class="form-label text-muted">Last Education</label>
