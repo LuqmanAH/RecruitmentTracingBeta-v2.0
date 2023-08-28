@@ -176,7 +176,7 @@ public class AdminController : Controller
 			Department = _context.Departments.FirstOrDefault(x => x.DepartmentName == objJob.JobDepartment),
 			JobMinEducation = objJob.JobMinEducation,
 			EmploymentType = objJob.EmploymentType,
-			JobPostedDate = DateTime.Today,
+			JobPostedDate = DateTime.Now,
 			Location = objJob.Location,
 			IsJobAvailable = true,
 			User = user,
