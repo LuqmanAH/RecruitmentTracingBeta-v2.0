@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 using RecruitmentTracking.Models;
 using RecruitmentTracking.Data;
@@ -26,6 +27,17 @@ public class AdminController : Controller
 		_userManager = userManager;
 	}
 
+	private List<SelectListItem> GetAvailableDepartments(ApplicationDbContext context)
+	{
+		List<SelectListItem> jobDepartments = new ();
+		foreach (Department dept in context.Departments!.ToList())
+		{
+			var selectItem = new SelectListItem{Value = $"{dept.DepartmentName}", Text = $"{dept.DepartmentName}"};
+			jobDepartments.Add(selectItem);
+		}
+		return jobDepartments;
+	}
+
 	[HttpGet]
 	public async Task<IActionResult> Index()
 	{
@@ -35,7 +47,7 @@ public class AdminController : Controller
 		foreach (Job job in listObjJob)
 		{
 			int candidateCount = _context.UserJobs!.Where(c => c.JobId == job.JobId).Count();
-			job.candidateCount = candidateCount;
+			job.CandidateCount = candidateCount;
 			JobViewModel modelView = new()
 			{
 				JobId = job.JobId,
@@ -78,7 +90,7 @@ public class AdminController : Controller
 				Location = job.Location,
 				JobPostedDate = job.JobPostedDate,
 				JobExpiredDate = job.JobExpiredDate,
-				CandidateCout = job.candidateCount,
+				CandidateCout = job.CandidateCount,
 			};
 			listJob.Add(data);
 		}
@@ -140,7 +152,7 @@ public class AdminController : Controller
 		}
 
 		ViewBag.AdminName = user.Name;
-
+		ViewBag.Departments = GetAvailableDepartments(_context);
 		return View();
 	}
 
@@ -161,6 +173,7 @@ public class AdminController : Controller
 			JobExpiredDate = objJob.JobExpiredDate,
 			JobRequirement = objJob.JobRequirement!.Replace("\r\n", "\n"),
 			JobDepartment = objJob.JobDepartment,
+			Department = _context.Departments.FirstOrDefault(x => x.DepartmentName == objJob.JobDepartment),
 			JobMinEducation = objJob.JobMinEducation,
 			EmploymentType = objJob.EmploymentType,
 			JobPostedDate = DateTime.Today,
@@ -168,6 +181,9 @@ public class AdminController : Controller
 			IsJobAvailable = true,
 			User = user,
 		};
+
+		// newJob.Department = _context.Departments.FirstOrDefault(x => x.)
+
 		_context.Jobs!.Add(newJob);
 		await _context.SaveChangesAsync();
 
@@ -186,6 +202,7 @@ public class AdminController : Controller
 		}
 
 		ViewBag.AdminName = user.Name;
+		ViewBag.Departments = GetAvailableDepartments(_context);
 
 		Job objJob = (await _context.Jobs!.FindAsync(id))!;
 
@@ -195,6 +212,9 @@ public class AdminController : Controller
 			JobTitle = objJob.JobTitle,
 			JobDescription = objJob.JobDescription,
 			JobRequirement = objJob.JobRequirement!.Replace("\r\n", "\n"),
+			JobDepartment = objJob.JobDepartment,
+			JobMinEducation = objJob.JobMinEducation,
+			EmploymentType = objJob.EmploymentType,
 			Location = objJob.Location,
 			JobPostedDate = objJob.JobPostedDate,
 			JobExpiredDate = objJob.JobExpiredDate,
@@ -218,6 +238,10 @@ public class AdminController : Controller
 		updateJob.JobDescription = objJob.JobDescription;
 		updateJob.JobExpiredDate = objJob.JobExpiredDate;
 		updateJob.JobRequirement = objJob.JobRequirement;
+		updateJob.JobDepartment = objJob.JobDepartment;
+		updateJob.Department = _context.Departments.FirstOrDefault(x => x.DepartmentName == objJob.JobDepartment);
+		updateJob.JobMinEducation = objJob.JobMinEducation;
+		updateJob.EmploymentType = objJob.EmploymentType;
 		updateJob.Location = objJob.Location;
 
 		await _context.SaveChangesAsync();
