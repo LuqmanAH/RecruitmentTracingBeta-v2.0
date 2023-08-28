@@ -419,6 +419,54 @@ public class AdminController : Controller
 	}
 
 	[HttpPost]
+	public async Task<IActionResult> SaveRejectionEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailReject = objEmailTemplate.EmailReject;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "Rejection Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> SaveHREmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailHR = objEmailTemplate.EmailHR;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "HR Interview Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> SaveUserEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailUser = objEmailTemplate.EmailUser;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "User Interview Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+	
+	[HttpPost]
+	public async Task<IActionResult> SaveOfferEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailOffering = objEmailTemplate.EmailOffering;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "Offering Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
 	public async Task<IActionResult> DownloadCV(string UserId, int JobId)
 	{
 		UserJob CJ = (await _context.UserJobs!
