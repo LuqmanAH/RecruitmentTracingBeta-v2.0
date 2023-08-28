@@ -8,14 +8,13 @@
           <div class="mb-4">
             <div class="py-2">
               <div>
-                <h5 class="text-2xl font-bold text-gray-800">Active Job</h5>
+                <h4 class="text-2xl font-bold text-gray-800 font-family: Arial Helvetica sans-serif">ACTIVE JOB</h4>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
+                <button type="button" class="btn bg-green-500 text-white hover:bg-green-600 rounded-lg"><a href="/Admin/CreateJob">Create Job</a></button>
+                <button type="button" class="btn bg-blue-500 text-white hover:bg-blue-600 rounded-lg me-2"><a href="/Admin">Active Jobs</a></button>
+                <button type="button" class="btn bg-red-500 text-white hover:bg-red-600 rounded-lg " ><a href="/Admin/JobCLosed">Closed Jobs</a></button>
               </div>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
-              <button type="button" class="btn bg-green-500 text-white hover:bg-green-600 rounded-lg"><a href="/Admin/CreateJob">Create Job</a></button>
-              <button type="button" class="btn bg-blue-500 text-white hover:bg-blue-600 rounded-lg me-2"><a href="/Admin">Active Jobs</a></button>
-              <button type="button" class="btn bg-red-500 text-white hover:bg-red-600 rounded-lg " ><a href="/Admin/JobCLosed">Closed Jobs</a></button>
-            </div>
-
+          </div>
             <div class="card mt-2">
               <div class="card-body">
                 @foreach (var item in Model)
