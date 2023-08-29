@@ -547,8 +547,8 @@ public class AdminController : Controller
 		string emailBody = emailTemplate
 				.Replace("[Applicant's Name]", objUser.Name)
 				.Replace("[Job Title]", objJob.JobTitle)
-				.Replace("[Date]", UJ.DateHRInterview.ToString())
-				.Replace("[Time]", UJ.TimeHRInterview.ToString())
+				.Replace("[Date]", UJ.DateHRInterview?.ToString("dddd, dd MMM yyy"))
+				.Replace("[Time]", UJ.TimeHRInterview?.ToString("HH:mm"))
 				.Replace("[Location]", UJ.LocationHRInterview);
 
 		//make instance message
@@ -601,8 +601,8 @@ public class AdminController : Controller
 		string emailBodyCandidate = emailTemplate
 				.Replace("[Applicant's Name]", objUser.Name)
 				.Replace("[Job Title]", objJob.JobTitle)
-				.Replace("[Date]", UJ.DateUserInterview.ToString())
-				.Replace("[Time]", UJ.TimeUserInterview.ToString())
+				.Replace("[Date]", UJ.DateUserInterview?.ToString("dddd, dd MMM yyy"))
+				.Replace("[Time]", UJ.TimeUserInterview?.ToString("HH:mm"))
 				.Replace("[Location]", UJ.LocationUserInterview);
 
 		string emailBodyUser =
