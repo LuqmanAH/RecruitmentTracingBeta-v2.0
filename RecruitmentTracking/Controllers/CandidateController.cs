@@ -232,12 +232,14 @@ public class CandidateController : Controller
             "current-item none none none",
             "none current-item none none",
             "none none current-item none",
-            "none none none current-item",
+            "none none none current-item"
         };
 
         int step = (int)Enum.Parse(typeof(ProcessType), status);
 
         if (step == 7) return "Rejected";
+
+        else if (step == 5) return "Accepted";
 
         return process[step - 1];
     }
