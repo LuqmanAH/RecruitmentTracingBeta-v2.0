@@ -10,9 +10,6 @@ using RecruitmentTracking.Models;
 
 namespace RecruitmentTracking.Controllers;
 
-/// <summary>
-/// Controller responsible for managing administrative tasks and functionalities in Homepage.
-/// </summary>
 public class HomeController : Controller
 {
 	private readonly ApplicationDbContext _context;
@@ -20,13 +17,6 @@ public class HomeController : Controller
 	private readonly IConfiguration _configuration;
 	private readonly UserManager<User> _userManager;
 
-	/// <summary>
-	/// Initializes a new instance of the class.
-	/// </summary>
-	/// <param name="logger">The logger instance for logging events and messages.</param>
-	/// <param name="configuration">The configuration provider for accessing configuration settings.</param>
-	/// <param name="context">The database context for accessing application data.</param>
-	/// <param name="userManager">The user manager for managing user-related operations.</param>
 	public HomeController(ILogger<HomeController> logger, IConfiguration configuration, ApplicationDbContext context, UserManager<User> userManager)
 	{
 		_logger = logger;
@@ -34,13 +24,65 @@ public class HomeController : Controller
 		_context = context;
 		_userManager = userManager;
 	}
+//! Unused
+	// [HttpGet]
+	// public async Task<IActionResult> Index()
+	// {
+	// 	User user = (await _userManager.GetUserAsync(User))!;
 
-	/// <summary>
-	/// Displays a list of jobs. (default)
-	/// </summary>
-	/// <returns> View from listJob </returns>
+	// 	if (user != null)
+	// 	{
+	// 		if (await _userManager.IsInRoleAsync(user, "Admin")) return Redirect("/Admin");
+	// 		Candidate objCandidate = (await _context.Candidates.FirstOrDefaultAsync(c => c.UserId == user.Id))!;
+	// 		if (objCandidate == null)
+	// 		{
+	// 			TempData["warning"] = "Please complete your data";
+	// 			return Redirect("/Profile");
+	// 		}
+	// 	}
+
+	// 	ViewBag.Subtitle = "Opportunities";
+	// 	ViewBag.Message = "See our available opportunities below";
+
+	// 	List<Department> jobDepartments = new List<Department>();
+	// 	foreach (Department department in _context.Departments!.ToList())
+	// 	{
+	// 		Department dept = new()
+	// 		{
+	// 			DepartmentId = department.DepartmentId,
+	// 			DepartmentName = department.DepartmentName
+	// 		};
+	// 		jobDepartments.Add(dept);
+	// 	}
+
+	// 	ViewBag.Departments = jobDepartments;
+
+	// 	List<JobViewModel> listJob = new();
+	// 	foreach (Job job in _context.Jobs!.Where(j => j.IsJobAvailable).ToList())
+	// 	{
+	// 		JobViewModel data = new()
+	// 		{
+	// 			JobId = job.JobId,
+	// 			JobTitle = job.JobTitle,
+	// 			JobDescription = job.JobDescription,
+	// 			JobRequirement = job.JobRequirement,
+	// 			Location = job.Location,
+	// 			JobDepartment = job.JobDepartment,
+	// 			JobMinEducation = job.JobMinEducation,
+	// 			EmploymentType = job.EmploymentType,
+	// 			JobPostedDate = job.JobPostedDate,
+	// 			JobExpiredDate = job.JobExpiredDate,
+	// 			Department = job.Department,
+	// 			CandidateCout = job.CandidateCount,
+	// 		};
+
+	// 		listJob.Add(data);
+	// 	}
+	// 	return View(listJob);
+	// }
+
 	[HttpGet]
-	public async Task<IActionResult> Index()
+	public async Task<IActionResult> Index(string searchString, string? chosenLocation = null, string? chosenDepartment = null)
 	{
 		User user = (await _userManager.GetUserAsync(User))!;
 
@@ -54,58 +96,7 @@ public class HomeController : Controller
 				return Redirect("/Profile");
 			}
 		}
-
-		ViewBag.Subtitle = "Opportunities";
-		ViewBag.Message = "See our available opportunities below";
-
-		List<Department> jobDepartments = new List<Department>();
-		foreach (Department department in _context.Departments!.ToList())
-		{
-			Department dept = new()
-			{
-				DepartmentId = department.DepartmentId,
-				DepartmentName = department.DepartmentName
-			};
-			jobDepartments.Add(dept);
-		}
-
-		ViewBag.Departments = jobDepartments;
-
-		List<JobViewModel> listJob = new();
-		foreach (Job job in _context.Jobs!.Where(j => j.IsJobAvailable).ToList())
-		{
-			JobViewModel data = new()
-			{
-				JobId = job.JobId,
-				JobTitle = job.JobTitle,
-				JobDescription = job.JobDescription,
-				JobRequirement = job.JobRequirement,
-				Location = job.Location,
-				JobDepartment = job.JobDepartment,
-				JobMinEducation = job.JobMinEducation,
-				EmploymentType = job.EmploymentType,
-				JobPostedDate = job.JobPostedDate,
-				JobExpiredDate = job.JobExpiredDate,
-				Department = job.Department,
-				CandidateCout = job.CandidateCount,
-			};
-
-			listJob.Add(data);
-		}
-		return View(listJob);
-	}
-
-	
-	/// <summary>
-	/// Displays a list of jobs based on the provided search criteria.
-	/// </summary>
-	/// <param name="searchString"> search keyword used to filter jobs by title. </param>
-	/// <param name="chosenLocation"> selected location to filter jobs by location. </param>	
-	/// <param name="chosenDepartment"> selected department to filter jobs by department. </param>
-	/// <returns> a view displaying a list of jobs based on the specified criteria. </returns>
-	[HttpPost]
-	public async Task<IActionResult> Index(string searchString, string? chosenLocation = null, string? chosenDepartment = null)
-	{
+		
 		Console.WriteLine("\n\nLOCATION CHOSEN: " + chosenLocation);
 		Console.WriteLine("\n\nDEPARTMENT CHOSEN: " + chosenDepartment);
 		var jobs = from j in _context.Jobs select j;
@@ -224,12 +215,6 @@ public class HomeController : Controller
 		return View(listJob);
 	}
 
-	/// <summary>
-	/// Function for filtering job by location.
-	/// </summary>
-	/// <param name="chosenLocation"> selected location to filter jobs by location. </param>
-	/// <param name="listJob"> list of job from Model. </param>
-	/// <returns></returns>
 	private List<JobViewModel> FilterByLocation (string chosenLocation, List<JobViewModel> listJob)
 	{
 		List<JobViewModel> filterByLocation = new List<JobViewModel>();
@@ -239,13 +224,7 @@ public class HomeController : Controller
 		}
 		return filterByLocation;
 	}
-	
-	/// <summary>
-	/// Function for filtering job by department.
-	/// </summary>
-	/// <param name="chosenDepartment"> selected location to filter jobs by location. </param>
-	/// <param name="listJob"> list of job from Model. </param>
-	/// <returns></returns>
+
 	private List<JobViewModel> FilterByDepartment (string chosenDepartment, List<JobViewModel> listJob)
 	{
 		List<JobViewModel> filterByDepartment = new List<JobViewModel>();
@@ -256,11 +235,6 @@ public class HomeController : Controller
 		return filterByDepartment;
 	}
 
-	/// <summary>
-	/// Display details from every jobs
-	/// </summary>
-	/// <param name="id"> select JobId to see details </param>
-	/// <returns></returns>
 	[HttpGet("/DetailJob/{id}")]
 	public IActionResult DetailJob(int id)
 	{
@@ -280,10 +254,6 @@ public class HomeController : Controller
 		return View(data);
 	}
 
-	/// <summary>
-	/// Message when error (default by system) 
-	/// </summary>
-	/// <returns> display error </returns>
 	[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 	public IActionResult Error()
 	{
