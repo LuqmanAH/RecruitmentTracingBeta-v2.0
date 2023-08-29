@@ -6,7 +6,7 @@
 }
     <!-- image with search job and location search inside -->
     <div class="pt-32 pb-20 px-5 bg-custom-background">
-      <form asp-controller="Home" asp-action="Index" method="post">
+      <form asp-controller="Home" asp-action="Index" method="get">
       <div class="w-full container flex justify-between space-y-3 flex-col lg:space-x-1 lg:space-y-0 lg:flex-row">
         <div class="w-full">
           <input type="text" name="searchstring" value="@Context.Request.Query["searchstring"]" class="form-control rounded-lg" placeholder="Search Job" aria-label="City"/>

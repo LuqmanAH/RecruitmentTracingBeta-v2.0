@@ -176,7 +176,7 @@ public class AdminController : Controller
 			Department = _context.Departments.FirstOrDefault(x => x.DepartmentName == objJob.JobDepartment),
 			JobMinEducation = objJob.JobMinEducation,
 			EmploymentType = objJob.EmploymentType,
-			JobPostedDate = DateTime.Today,
+			JobPostedDate = DateTime.Now,
 			Location = objJob.Location,
 			IsJobAvailable = true,
 			User = user,
@@ -419,6 +419,54 @@ public class AdminController : Controller
 	}
 
 	[HttpPost]
+	public async Task<IActionResult> SaveRejectionEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailReject = objEmailTemplate.EmailReject;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "Rejection Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> SaveHREmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailHR = objEmailTemplate.EmailHR;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "HR Interview Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> SaveUserEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailUser = objEmailTemplate.EmailUser;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "User Interview Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+	
+	[HttpPost]
+	public async Task<IActionResult> SaveOfferEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailOffering = objEmailTemplate.EmailOffering;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "Offering Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
 	public async Task<IActionResult> DownloadCV(string UserId, int JobId)
 	{
 		UserJob CJ = (await _context.UserJobs!
@@ -499,8 +547,8 @@ public class AdminController : Controller
 		string emailBody = emailTemplate
 				.Replace("[Applicant's Name]", objUser.Name)
 				.Replace("[Job Title]", objJob.JobTitle)
-				.Replace("[Date]", UJ.DateHRInterview.ToString())
-				.Replace("[Time]", UJ.TimeHRInterview.ToString())
+				.Replace("[Date]", UJ.DateHRInterview?.ToString("dddd, dd MMM yyy"))
+				.Replace("[Time]", UJ.TimeHRInterview?.ToString("HH:mm"))
 				.Replace("[Location]", UJ.LocationHRInterview);
 
 		//make instance message
@@ -553,8 +601,8 @@ public class AdminController : Controller
 		string emailBodyCandidate = emailTemplate
 				.Replace("[Applicant's Name]", objUser.Name)
 				.Replace("[Job Title]", objJob.JobTitle)
-				.Replace("[Date]", UJ.DateUserInterview.ToString())
-				.Replace("[Time]", UJ.TimeUserInterview.ToString())
+				.Replace("[Date]", UJ.DateUserInterview?.ToString("dddd, dd MMM yyy"))
+				.Replace("[Time]", UJ.TimeUserInterview?.ToString("HH:mm"))
 				.Replace("[Location]", UJ.LocationUserInterview);
 
 		string emailBodyUser =

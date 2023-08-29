@@ -24,7 +24,27 @@
                     </div>
                 </a>
             </div>
-        } else {
+        }
+        else if(status.CandidateStatus![0] == "Accepted")
+        {
+            <div class="container mt-3" style="background: #fff;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.1);">
+                <a class="step-wizard-list d-flex">
+                    <div class="">
+                        <p class="text-2xl font-bold fw-smedium ms-3">@status.JobTitle</p>
+                        <p class="text-base font-bold fw-medium mt-2 ms-3 text-green-400"><i class="bi bi-check-circle mr-2"></i>Accepted</p>
+                        <p class="text-sm font-bold  text-muted fw-medium mt-2 ms-3">We have received your response regarding the offering letter contract.<br>
+                        Our staff will be in touch soon to discuss about your placement and your first day orientation.<br>
+                        Welcome to Formulatrix!
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+        }
+
+        else 
+        {
        
         string style_1 = status.CandidateStatus![0];
         string style_2 = status.CandidateStatus![1];

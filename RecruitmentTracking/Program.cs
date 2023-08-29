@@ -46,7 +46,7 @@ builder.Services.AddAuthentication()
 	config.GetSection("Authentication:Google");
 	options.ClientId = googleAuthNSection["ClientId"];
 	options.ClientSecret = googleAuthNSection["ClientSecret"];
-	options.CorrelationCookie.SameSite = SameSiteMode.None;
+	options.CorrelationCookie.SameSite = SameSiteMode.Lax;
 });
 
 // Konfigurasi MailSettings dari appsettings.json
@@ -75,7 +75,7 @@ else
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
-	MinimumSameSitePolicy = SameSiteMode.None,
+	MinimumSameSitePolicy = SameSiteMode.Lax,
 	HttpOnly = HttpOnlyPolicy.Always,
 	Secure = CookieSecurePolicy.Always
 });
