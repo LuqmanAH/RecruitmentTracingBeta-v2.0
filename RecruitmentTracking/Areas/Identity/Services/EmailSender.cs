@@ -35,7 +35,7 @@ namespace RecruitmentTracking.Areas.Identity.Services
 
 			try
 			{
-				await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.None);
+				await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
 				await client.AuthenticateAsync(_mailSettings.Username, _mailSettings.Password);
 				await client.SendAsync(emailMessage);
 			}
