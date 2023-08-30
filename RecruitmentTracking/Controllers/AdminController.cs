@@ -47,7 +47,7 @@ public class AdminController : Controller
 		foreach (Job job in listObjJob)
 		{
 			int candidateCount = _context.UserJobs!.Where(c => c.JobId == job.JobId).Count();
-			job.CandidateCount = candidateCount;
+			// job.CandidateCount = candidateCount;
 			JobViewModel modelView = new()
 			{
 				JobId = job.JobId,
@@ -57,7 +57,7 @@ public class AdminController : Controller
 				Location = job.Location,
 				JobPostedDate = job.JobPostedDate,
 				JobExpiredDate = job.JobExpiredDate,
-				CandidateCout = candidateCount,
+				CandidateCout = job.CandidateCount,
 			};
 			listJobModel.Add(modelView);
 		}
@@ -103,6 +103,7 @@ public class AdminController : Controller
 		Job objJob = (await _context.Jobs!.FindAsync(id))!;
 
 		objJob.IsJobAvailable = false;
+		objJob.CandidateCount = 0;
 		await _context.SaveChangesAsync();
 
 		TempData["success"] = "Successfully Close a Job";
@@ -115,6 +116,7 @@ public class AdminController : Controller
 		Job objJob = _context.Jobs!.Find(id)!;
 
 		objJob.IsJobAvailable = true;
+		objJob.CandidateCount = 0;
 		await _context.SaveChangesAsync();
 
 		TempData["success"] = "Successfully Activate a Job";
