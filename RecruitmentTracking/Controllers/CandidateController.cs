@@ -157,6 +157,7 @@ public class CandidateController : Controller
         objCandidate.Phone = updateCandidate.Phone;
         objCandidate.LastEducation = updateCandidate.LastEducation;
         objCandidate.GPA = updateCandidate.GPA;
+        objCandidate.Salary = updateCandidate.Salary;
 
         Job objJob = (await _context.Jobs!.FindAsync(JobId))!;
 
