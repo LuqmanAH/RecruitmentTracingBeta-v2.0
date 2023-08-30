@@ -657,6 +657,58 @@ public class AdminController : Controller
 		return Redirect($"/Admin/RecruitmentProcess/{JobId}");
 	}
 
+	[HttpPost]
+	public async Task<ActionResult> SendOffering(string UserId, int JobId)
+	{
+		string myEmailAccount = "projectadmreruiter@gmail.com";
+		string myEmailPassword = "qucnsmdddmobmnfo";
+
+		UserJob UJ = (await _context.UserJobs!
+							 .FirstOrDefaultAsync(cj => cj.JobId == JobId && cj.UserId == UserId))!;
+
+		User objUser = (await _context.Users!.FindAsync(UJ.UserId))!;
+		Job objJob = (await _context.Jobs!.FindAsync(UJ.JobId))!;
+
+		string emailTemplate = UJ.Job!.EmailOffering!;
+		string emailBodyCandidate = emailTemplate
+				.Replace("[Applicant's Name]", objUser.Name)
+				.Replace("[Job Title]", objJob.JobTitle);
+
+		//make instance message
+		MailMessage messageCandidate = new MailMessage
+		{
+			From = new MailAddress(myEmailAccount)
+		};
+		
+		MailMessage messageUser = new MailMessage
+		{
+			From = new MailAddress(myEmailAccount)
+		};
+
+		//add recipient
+		messageCandidate.To.Add(new MailAddress($"{objUser.Email}"));
+		// message.To.Add(new MailAddress("ignatius.c.k@gmail.com"));
+		messageUser.To.Add(new MailAddress("projectadmreruiter@gmail.com"));
+		// add subject and body
+		messageCandidate.Subject = $"Offering Job : {objJob.JobTitle}";
+		messageCandidate.Body = emailBodyCandidate;
+
+		var smtpClient = new SmtpClient("smtp.gmail.com")
+		{
+			Port = 587,
+			Credentials = new NetworkCredential(myEmailAccount, myEmailPassword),
+			EnableSsl = true,
+		};
+
+		//send message
+		smtpClient.Send(messageCandidate);
+		smtpClient.Send(messageUser);
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "Email sent";
+		return Redirect($"/Admin/RecruitmentProcess/{JobId}");
+	}
+	
 	private void SendEmailRejection(User objUser, UserJob UJ, string jobTitle)
 	{
 		string myEmailAccount = "projectadmreruiter@gmail.com";
