@@ -1,13 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
+using MimeKit;
+using System.Net.Sockets;
+using MailKit.Net.Smtp;
+
 using RecruitmentTracking.Models;
 using RecruitmentTracking.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using System.Net.Mail;
+// using System.Net.Mail;
 using System.Net;
+using Microsoft.Extensions.Options;
 
 namespace RecruitmentTracking.Controllers;
 
@@ -18,13 +23,15 @@ public class AdminController : Controller
 	private readonly ILogger<HomeController> _logger;
 	private readonly IConfiguration _configuration;
 	private readonly UserManager<User> _userManager;
+	private readonly MailSettings _mailSettings;
 
-	public AdminController(ILogger<HomeController> logger, IConfiguration configuration, ApplicationDbContext context, UserManager<User> userManager)
+	public AdminController(ILogger<HomeController> logger, IConfiguration configuration, ApplicationDbContext context, UserManager<User> userManager, IOptions<MailSettings> mailSettings)
 	{
 		_logger = logger;
 		_configuration = configuration;
 		_context = context;
 		_userManager = userManager;
+		_mailSettings = mailSettings.Value;
 	}
 
 	private List<SelectListItem> GetAvailableDepartments(ApplicationDbContext context)
@@ -62,6 +69,9 @@ public class AdminController : Controller
 			listJobModel.Add(modelView);
 		}
 		await _context.SaveChangesAsync();
+
+		Console.WriteLine(_mailSettings.Username);
+		Console.WriteLine(_mailSettings.Password);
 
 		return View(listJobModel);
 		//return View(listJob);
@@ -532,8 +542,8 @@ public class AdminController : Controller
 	[HttpPost]
 	public async Task<ActionResult> SendHRInterview(string UserId, int JobId, DateTime date, DateTime time, string location)
 	{
-		string myEmailAccount = "projectadmreruiter@gmail.com";
-		string myEmailPassword = "qucnsmdddmobmnfo";
+		var emailMessage = new MimeMessage();
+		emailMessage.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.FromAddress));
 
 		UserJob UJ = (await _context.UserJobs!
 							 .FirstOrDefaultAsync(cj => cj.JobId == JobId && cj.UserId == UserId))!;
@@ -553,30 +563,31 @@ public class AdminController : Controller
 				.Replace("[Time]", UJ.TimeHRInterview?.ToString("HH:mm"))
 				.Replace("[Location]", UJ.LocationHRInterview);
 
-		//make instance message
-		MailMessage message = new MailMessage
+		emailMessage.To.Add(new MailboxAddress("", objUser.Email));
+		emailMessage.Subject = $"UPDATE Recruitment for {objJob.JobTitle}";
+		emailMessage.Body = new TextPart("html")
 		{
-			From = new MailAddress(myEmailAccount)
+			Text = emailBody
 		};
 
-		//add recipient
-		message.To.Add(new MailAddress($"{objUser.Email}"));
-		// message.To.Add(new MailAddress("ignatius.c.k@gmail.com"));
+		using var client = new SmtpClient();
 
-		// add subject and body
-		message.Subject = $"UPDATE Recruitment for {objJob.JobTitle}";
-		message.Body = emailBody;
-
-		var SmtpClient = new SmtpClient("smtp.gmail.com")
+		try
 		{
-			Port = 587,
-			Credentials = new NetworkCredential(myEmailAccount, myEmailPassword),
-			EnableSsl = true,
-		};
-
-		//send message
-		SmtpClient.Send(message);
-		await _context.SaveChangesAsync();
+			await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+			await client.AuthenticateAsync(_mailSettings.Username, _mailSettings.Password);
+			await client.SendAsync(emailMessage);
+		}
+		catch (SocketException)
+		{
+			var ErrorViewModel = new ErrorViewModel();
+			Console.WriteLine("Error: Failed to Connect");
+		}
+		finally
+		{
+			await client.DisconnectAsync(true);
+			await _context.SaveChangesAsync();
+		}
 
 		TempData["success"] = "Email sent";
 		return Redirect($"/Admin/RecruitmentProcess/{JobId}");
@@ -585,8 +596,8 @@ public class AdminController : Controller
 	[HttpPost]
 	public async Task<ActionResult> SendUserInterview(string UserId, int JobId, DateTime date, DateTime time, string location)
 	{
-		string myEmailAccount = "projectadmreruiter@gmail.com";
-		string myEmailPassword = "qucnsmdddmobmnfo";
+		var emailMessage = new MimeMessage();
+		emailMessage.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.FromAddress));
 
 		UserJob UJ = (await _context.UserJobs!
 							 .FirstOrDefaultAsync(cj => cj.JobId == JobId && cj.UserId == UserId))!;
@@ -607,53 +618,31 @@ public class AdminController : Controller
 				.Replace("[Time]", UJ.TimeUserInterview?.ToString("HH:mm"))
 				.Replace("[Location]", UJ.LocationUserInterview);
 
-		string emailBodyUser =
-		"Interview User \n \n" +
-		"Details  \n" +
-		$"Name      : {objUser.Name} \n" +
-		$"Edu       : {objCandidate.LastEducation} \n" +
-		$"GPA       : {objCandidate.GPA} \n" +
-		$"Time      : {UJ.TimeUserInterview} \n" +
-		$"Date      : {UJ.DateUserInterview} \n" +
-		$"Location  : {UJ.LocationUserInterview} \n";
-
-		//make instance message
-		MailMessage messageCandidate = new MailMessage
+		emailMessage.To.Add(new MailboxAddress("", objUser.Email));
+		emailMessage.Subject = $"UPDATE Recruitment for {objJob.JobTitle}";
+		emailMessage.Body = new TextPart("html")
 		{
-			From = new MailAddress(myEmailAccount)
+			Text = emailBodyCandidate
 		};
 
-		MailMessage messageUser = new MailMessage
+		using var client = new SmtpClient();
+
+		try
 		{
-			From = new MailAddress(myEmailAccount)
-		};
-
-		//add recipient
-		// messageCandidate.To.Add(new MailAddress("ignatius.c.k@gmail.com"));
-		// messageUser.To.Add(new MailAddress("ignatius.adse@gmail.com"));
-		messageCandidate.To.Add(new MailAddress($"{objUser.Email}"));
-		messageUser.To.Add(new MailAddress("projectadmreruiter@gmail.com"));
-		// message.To.Add(new MailAddress("ignatius.c.k@gmail.com"));
-
-		// add subject and body
-		messageCandidate.Subject = $"User Interview : {objJob.JobTitle}";
-		messageCandidate.Body = emailBodyCandidate;
-
-		messageUser.Subject = $"User Interview : {objJob.JobTitle}";
-		messageUser.Body = emailBodyUser;
-
-		var smtpClient = new SmtpClient("smtp.gmail.com")
+			await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+			await client.AuthenticateAsync(_mailSettings.Username, _mailSettings.Password);
+			await client.SendAsync(emailMessage);
+		}
+		catch (SocketException)
 		{
-			Port = 587,
-			Credentials = new NetworkCredential(myEmailAccount, myEmailPassword),
-			EnableSsl = true,
-		};
-
-		//send message
-		smtpClient.Send(messageCandidate);
-		smtpClient.Send(messageUser);
-
-		await _context.SaveChangesAsync();
+			var ErrorViewModel = new ErrorViewModel();
+			Console.WriteLine("Error: Failed to Connect");
+		}
+		finally
+		{
+			await client.DisconnectAsync(true);
+			await _context.SaveChangesAsync();
+		}
 
 		TempData["success"] = "Email sent";
 		return Redirect($"/Admin/RecruitmentProcess/{JobId}");
@@ -662,8 +651,8 @@ public class AdminController : Controller
 	[HttpPost]
 	public async Task<ActionResult> SendOffering(string UserId, int JobId)
 	{
-		string myEmailAccount = "projectadmreruiter@gmail.com";
-		string myEmailPassword = "qucnsmdddmobmnfo";
+		var emailMessage = new MimeMessage();
+		emailMessage.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.FromAddress));
 
 		UserJob UJ = (await _context.UserJobs!
 							 .FirstOrDefaultAsync(cj => cj.JobId == JobId && cj.UserId == UserId))!;
@@ -676,73 +665,71 @@ public class AdminController : Controller
 				.Replace("[Applicant's Name]", objUser.Name)
 				.Replace("[Job Title]", objJob.JobTitle);
 
-		//make instance message
-		MailMessage messageCandidate = new MailMessage
+		emailMessage.To.Add(new MailboxAddress("", objUser.Email));
+		emailMessage.Subject = $"UPDATE Recruitment for {objJob.JobTitle}";
+		emailMessage.Body = new TextPart("html")
 		{
-			From = new MailAddress(myEmailAccount)
-		};
-		
-		MailMessage messageUser = new MailMessage
-		{
-			From = new MailAddress(myEmailAccount)
+			Text = emailBodyCandidate
 		};
 
-		//add recipient
-		messageCandidate.To.Add(new MailAddress($"{objUser.Email}"));
-		// message.To.Add(new MailAddress("ignatius.c.k@gmail.com"));
-		messageUser.To.Add(new MailAddress("projectadmreruiter@gmail.com"));
-		// add subject and body
-		messageCandidate.Subject = $"Offering Job : {objJob.JobTitle}";
-		messageCandidate.Body = emailBodyCandidate;
+		using var client = new SmtpClient();
 
-		var smtpClient = new SmtpClient("smtp.gmail.com")
+		try
 		{
-			Port = 587,
-			Credentials = new NetworkCredential(myEmailAccount, myEmailPassword),
-			EnableSsl = true,
-		};
-
-		//send message
-		smtpClient.Send(messageCandidate);
-		smtpClient.Send(messageUser);
-		await _context.SaveChangesAsync();
+			await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+			await client.AuthenticateAsync(_mailSettings.Username, _mailSettings.Password);
+			await client.SendAsync(emailMessage);
+		}
+		catch (SocketException)
+		{
+			var ErrorViewModel = new ErrorViewModel();
+			Console.WriteLine("Error: Failed to Connect");
+		}
+		finally
+		{
+			await client.DisconnectAsync(true);
+			await _context.SaveChangesAsync();
+		}
 
 		TempData["success"] = "Email sent";
 		return Redirect($"/Admin/RecruitmentProcess/{JobId}");
 	}
 	
-	private void SendEmailRejection(User objUser, UserJob UJ, string jobTitle)
+	private async Task SendEmailRejection(User objUser, UserJob UJ, string jobTitle)
 	{
-		string myEmailAccount = "projectadmreruiter@gmail.com";
-		string myEmailPassword = "qucnsmdddmobmnfo";
+		var emailMessage = new MimeMessage();
+		emailMessage.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.FromAddress));
 
 		string emailTemplate = UJ.Job!.EmailReject!;
 		string emailBody = emailTemplate
 				.Replace("[Applicant's Name]", objUser.Name)
 				.Replace("[Job Title]", jobTitle);
 
-		//make instance message
-		MailMessage message = new MailMessage
+		emailMessage.To.Add(new MailboxAddress("", objUser.Email));
+		emailMessage.Subject = $"UPDATE Recruitment for {jobTitle}";
+		emailMessage.Body = new TextPart("html")
 		{
-			From = new MailAddress(myEmailAccount)
+			Text = emailBody
 		};
 
-		//add recipient
-		message.To.Add(new MailAddress($"{objUser.Email}"));
+		using var client = new SmtpClient();
 
-		// add subject and body
-		message.Subject = $"UPDATE Recruitment for {jobTitle}";
-		message.Body = emailBody;
-
-		var SmtpClient = new SmtpClient("smtp.gmail.com")
+		try
 		{
-			Port = 587,
-			Credentials = new NetworkCredential(myEmailAccount, myEmailPassword),
-			EnableSsl = true,
-		};
-
-		//send message
-		SmtpClient.Send(message);
+			await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+			await client.AuthenticateAsync(_mailSettings.Username, _mailSettings.Password);
+			await client.SendAsync(emailMessage);
+		}
+		catch (SocketException)
+		{
+			var ErrorViewModel = new ErrorViewModel();
+			Console.WriteLine("Error: Failed to Connect");
+		}
+		finally
+		{
+			await client.DisconnectAsync(true);
+			await _context.SaveChangesAsync();
+		}
 	}
 
 	// [HttpPost]
