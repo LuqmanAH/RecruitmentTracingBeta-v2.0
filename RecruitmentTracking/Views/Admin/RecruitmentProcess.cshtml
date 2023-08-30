@@ -341,13 +341,11 @@
                  @* <td>@Html.DisplayFor(m => m.Name, new { @class="form-control"})</td>
                 <td>@Html.DisplayFor(m => m.Salary, new { @class="form-control"})</td> *@
                 <td>
-
-                    <form action="/Admin/SendOffering" class="d-flex justify-content-between" method="post">
-                      <input type="hidden" name="UserId" value= @candidate.UserId />
-                      <input type="hidden" name="JobId" value= @ViewBag.JobId />
-                      <button type="button" class="btn bg-amber-500 text-white hover:bg-amber-600 rounded-lg btn-sm">Send</button>
-                    </form>
-
+                  <form class="d-flex justify-content-between" action="/Admin/SendOffering" method="post">
+                    <input type="hidden" name="UserId" value= @candidate.UserId />
+                    <input type="hidden" name="JobId" value= @ViewBag.JobId />
+                    <button type="submit" class="btn bg-amber-500 text-white hover:bg-amber-600 rounded-lg btn-sm">Send</button>
+                  </form>
                </td>
                 <td>
                   <form action="/Admin/Accept" class="btn bg-green-600 btn-sm text-white hover:bg-green-700 rounded-lg" method="post">
