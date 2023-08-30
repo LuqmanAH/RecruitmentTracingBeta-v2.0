@@ -501,7 +501,6 @@ public class AdminController : Controller
 		int statusInJob = (int)Enum.Parse(typeof(ProcessType), UJ.StatusInJob!);
 		statusInJob++;
 		UJ.StatusInJob = $"{(ProcessType)statusInJob}";
-		// SendEmailRejection(objUser, UJ, objJob.JobTitle!);
 
 		await _context.SaveChangesAsync();
 
@@ -531,7 +530,7 @@ public class AdminController : Controller
 
 		UJ.StatusInJob = $"{ProcessType.Rejected}";
 
-		SendEmailRejection(objUser, UJ, objJob.JobTitle!);
+		await SendEmailRejection(objUser, UJ, objJob.JobTitle!);
 
 		await _context.SaveChangesAsync();
 
@@ -580,8 +579,8 @@ public class AdminController : Controller
 		}
 		catch (SocketException)
 		{
-			var ErrorViewModel = new ErrorViewModel();
-			Console.WriteLine("Error: Failed to Connect");
+			TempData["warning"] = "Error sending the email due to connection issues";
+			return Redirect($"/Admin/RecruitmentProcess/{JobId}");
 		}
 		finally
 		{
@@ -635,8 +634,8 @@ public class AdminController : Controller
 		}
 		catch (SocketException)
 		{
-			var ErrorViewModel = new ErrorViewModel();
-			Console.WriteLine("Error: Failed to Connect");
+			TempData["warning"] = "Error sending the email due to connection issues";
+			return Redirect($"/Admin/RecruitmentProcess/{JobId}");
 		}
 		finally
 		{
@@ -682,8 +681,8 @@ public class AdminController : Controller
 		}
 		catch (SocketException)
 		{
-			var ErrorViewModel = new ErrorViewModel();
-			Console.WriteLine("Error: Failed to Connect");
+			TempData["warning"] = "Error sending the email due to connection issues";
+			return Redirect($"/Admin/RecruitmentProcess/{JobId}");
 		}
 		finally
 		{
@@ -722,8 +721,7 @@ public class AdminController : Controller
 		}
 		catch (SocketException)
 		{
-			var ErrorViewModel = new ErrorViewModel();
-			Console.WriteLine("Error: Failed to Connect");
+			TempData["warning"] = "Error sending the email due to connection issues";
 		}
 		finally
 		{
@@ -731,14 +729,4 @@ public class AdminController : Controller
 			await _context.SaveChangesAsync();
 		}
 	}
-
-	// [HttpPost]
-	// public async Task<IActionResult> TemplateEmail(EmailTemplate email)
-	// {
-	//     Job objJob = (await _db.Jobs!.FindAsync(email.JobId))!;
-	//     objJob.EmailHR = email.EmailHR;
-	//     await _db.SaveChangesAsync();
-
-	//     return View(email);
-	// }
 }
