@@ -156,7 +156,7 @@ public class HomeController : Controller
 		return View(listJob);
 	}
 
-	private List<JobViewModel> FilterByLocation (string chosenLocation, List<JobViewModel> listJob)
+	public List<JobViewModel> FilterByLocation (string chosenLocation, List<JobViewModel> listJob)
 	{
 		List<JobViewModel> filterByLocation = new List<JobViewModel>();
 		foreach (var job in listJob)
@@ -166,7 +166,7 @@ public class HomeController : Controller
 		return filterByLocation;
 	}
 
-	private List<JobViewModel> FilterByDepartment (string chosenDepartment, List<JobViewModel> listJob)
+	public List<JobViewModel> FilterByDepartment (string chosenDepartment, List<JobViewModel> listJob)
 	{
 		List<JobViewModel> filterByDepartment = new List<JobViewModel>();
 		foreach (var job in listJob)

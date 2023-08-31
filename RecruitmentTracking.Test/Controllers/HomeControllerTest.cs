@@ -93,6 +93,25 @@ namespace RecruitmentTracking.Tests
 		}
 
 		[Fact]
+		public async Task Index_Searching()
+		{
+			var context = SetupInMemoryDbContext();
+			var controller = SetupController(context);
+
+			var resultValidSearch = await controller.Index("tester");
+			var resultInvalidSearch = await controller.Index("job");
+			
+			var validViewResult = (ViewResult) resultValidSearch;
+			var validSearchList = (List<JobViewModel>) validViewResult.Model;
+
+			var invalidViewResult = (ViewResult) resultInvalidSearch;
+			var invalidSearchList = (List<JobViewModel>) invalidViewResult.Model;
+
+			validSearchList.Should().NotBeNull();
+			invalidSearchList.Should().BeEmpty();
+		}
+
+		[Fact]
 		public async Task Index_ReturnsWithFilter()
 		{
 			// Arrange
@@ -110,9 +129,9 @@ namespace RecruitmentTracking.Tests
 			var listJob = (List<JobViewModel>)viewResult.Model;
 
 			listJob.Should().OnlyContain(job =>
-			(job.JobTitle == title || job.JobTitle == null) ||
-			(job.JobDepartment == department || job.JobDepartment == null) ||
-			(job.Location == location || job.Location == null)
+			job.JobTitle == title || job.JobTitle == null ||
+			job.JobDepartment == department || job.JobDepartment == null ||
+			job.Location == location || job.Location == null
 			);
 		}
 
