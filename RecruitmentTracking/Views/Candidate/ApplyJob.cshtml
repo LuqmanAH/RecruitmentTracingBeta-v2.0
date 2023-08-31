@@ -29,7 +29,7 @@
                     @Html.TextBoxFor(m => m.Name, new { @class = "form-control"})
               
                     <label for="phone" class="form-label">Phone Number</label>
-                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", type = "number" })
+                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", type="tel", pattern = "[0-9]{10,}" })
                 
                     <label for="education" class="form-label text-muted mt-2">Last Education</label>
                     @Html.DropDownListFor(m => m.LastEducation, new SelectList(dropdownOptions, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })

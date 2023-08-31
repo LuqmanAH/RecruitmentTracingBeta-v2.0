@@ -1,0 +1,38 @@
+@model List<Lamaran>
+
+@{
+    ViewBag.Title = "Daftar Lamaran";
+}
+
+<h2>Daftar Lamaran</h2>
+
+@using (Html.BeginForm("Index", "Lamaran", FormMethod.Get))
+{
+    <div class="form-group">
+        @Html.Label("Jabatan:")
+        @Html.TextBox("jabatanFilter", ViewBag.CurrentFilter)
+    </div>
+    <div class="form-group">
+        @Html.Label("Lokasi:")
+        @Html.TextBox("lokasiFilter", ViewBag.CurrentFilter)
+    </div>
+    <div class="form-group">
+        <button type="submit">Cari</button>
+    </div>
+}
+
+<table class="table">
+    <tr>
+    <th>Nama</th>
+        <th>Jabatan</th>
+        <th>Lokasi</th>
+    </tr>
+    @foreach (var lamaran in Model)
+    {
+        <tr>
+            <td>@lamaran.Nama</td>
+            <td>@lamaran.Jabatan</td>
+            <td>@lamaran.Lokasi</td>
+        </tr>
+    }
+</table>

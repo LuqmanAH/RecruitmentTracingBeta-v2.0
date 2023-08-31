@@ -157,6 +157,7 @@ public class CandidateController : Controller
         objCandidate.Phone = updateCandidate.Phone;
         objCandidate.LastEducation = updateCandidate.LastEducation;
         objCandidate.GPA = updateCandidate.GPA;
+        objCandidate.Salary = updateCandidate.Salary;
 
         Job objJob = (await _context.Jobs!.FindAsync(JobId))!;
 
@@ -168,7 +169,7 @@ public class CandidateController : Controller
             StatusInJob = $"{ProcessType.Administration}",
         };
 
-        objJob.candidateCount++;
+        objJob.CandidateCount++;
         await _context.UserJobs!.AddAsync(objCJ);
         await _context.SaveChangesAsync();
 
@@ -232,12 +233,14 @@ public class CandidateController : Controller
             "current-item none none none",
             "none current-item none none",
             "none none current-item none",
-            "none none none current-item",
+            "none none none current-item"
         };
 
         int step = (int)Enum.Parse(typeof(ProcessType), status);
 
         if (step == 7) return "Rejected";
+
+        else if (step == 5) return "Accepted";
 
         return process[step - 1];
     }

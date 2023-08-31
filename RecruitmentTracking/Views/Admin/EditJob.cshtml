@@ -8,6 +8,25 @@
         new SelectListItem { Value = "Semarang", Text = "Semarang" },
         new SelectListItem { Value = "Bandung", Text = "Bandung" }
     };
+    var dropdownOptionsDepartment = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Engineering", Text = "Engineering" },
+        new SelectListItem { Value = "Human Resource", Text = "Human Resource" },
+        new SelectListItem { Value = "IT", Text = "IT" },
+        new SelectListItem { Value = "Sales / Marketing", Text = "Sales / Marketing" }
+    };
+     var dropdownOptionsMinEducation = new List<SelectListItem>
+    {
+        new SelectListItem{ Value = "High School Degree", Text = "High School Degree" },
+        new SelectListItem{ Value = "Bachelor Degree", Text = "Bachelor Degree" },
+        new SelectListItem{ Value = "Diploma Degree", Text = "Diploma Degree" }
+    };
+    var dropdownOptionsEmploymentType = new List<SelectListItem>
+    {
+        new SelectListItem{ Value = "Full-Time", Text = "Full-Time" },
+        new SelectListItem{ Value = "Part-Time", Text = "Part-Time" },
+        new SelectListItem{ Value = "Internship", Text = "Internship" }
+    };
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -16,7 +35,7 @@
  <div class="container me-5">
     <div class="col-span-4">
         <div class="d-flex">
-        <main class="p-5 mt-5" style="height: 100vh; width: 80%">
+        <main class="container flex-1 bg-gray-100 p-8 mt-5">
             <div class="py-1">
                 <div class="my-1">
 
@@ -51,11 +70,26 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="JobRequirement" class="form-label">Min Education</label>  
+                        @Html.DropDownListFor(m => m.JobMinEducation, new SelectList(dropdownOptionsMinEducation, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="JobRequirement" class="form-label">Department</label>  
+                        @Html.DropDownListFor(m => m.JobDepartment, new SelectList(dropdownOptionsDepartment, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="JobRequirement" class="form-label">Employment Type</label>  
+                        @Html.DropDownListFor(m => m.EmploymentType, new SelectList(dropdownOptionsEmploymentType, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
+                    </div> 
+
+                    <div class="mb-3">
                         <label for="JobRequirement" class="form-label">Office Location</label>  
                         @Html.DropDownListFor(m => m.Location, new SelectList(dropdownOptions, "Value", "Text"), "Select an option", new { @class = "form-control" })
                     </div>
 
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
                         @* <button class="btn bg-green-500 text-white hover:bg-green-600 rounded-lg" type="submit">Preview</button> *@
                         <button class="btn bg-blue-500 text-white hover:bg-blue-600 rounded-lg" type="submit">Save Update</button>
                     </div>

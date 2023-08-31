@@ -1,12 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
+using MimeKit;
+using System.Net.Sockets;
+using MailKit.Net.Smtp;
 using RecruitmentTracking.Models;
 using RecruitmentTracking.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using System.Net.Mail;
+// using System.Net.Mail;
 using System.Net;
+using Microsoft.Extensions.Options;
 
 namespace RecruitmentTracking.Controllers;
 
@@ -17,13 +21,26 @@ public class AdminController : Controller
 	private readonly ILogger<HomeController> _logger;
 	private readonly IConfiguration _configuration;
 	private readonly UserManager<User> _userManager;
+	private readonly MailSettings _mailSettings;
 
-	public AdminController(ILogger<HomeController> logger, IConfiguration configuration, ApplicationDbContext context, UserManager<User> userManager)
+	public AdminController(ILogger<HomeController> logger, IConfiguration configuration, ApplicationDbContext context, UserManager<User> userManager, IOptions<MailSettings> mailSettings)
 	{
 		_logger = logger;
 		_configuration = configuration;
 		_context = context;
 		_userManager = userManager;
+		_mailSettings = mailSettings.Value;
+	}
+
+	private List<SelectListItem> GetAvailableDepartments(ApplicationDbContext context)
+	{
+		List<SelectListItem> jobDepartments = new ();
+		foreach (Department dept in context.Departments!.ToList())
+		{
+			var selectItem = new SelectListItem{Value = $"{dept.DepartmentName}", Text = $"{dept.DepartmentName}"};
+			jobDepartments.Add(selectItem);
+		}
+		return jobDepartments;
 	}
 
 	[HttpGet]
@@ -35,7 +52,6 @@ public class AdminController : Controller
 		foreach (Job job in listObjJob)
 		{
 			int candidateCount = _context.UserJobs!.Where(c => c.JobId == job.JobId).Count();
-			job.candidateCount = candidateCount;
 			JobViewModel modelView = new()
 			{
 				JobId = job.JobId,
@@ -45,14 +61,13 @@ public class AdminController : Controller
 				Location = job.Location,
 				JobPostedDate = job.JobPostedDate,
 				JobExpiredDate = job.JobExpiredDate,
-				CandidateCout = candidateCount,
+				CandidateCout = job.CandidateCount,
 			};
 			listJobModel.Add(modelView);
 		}
 		await _context.SaveChangesAsync();
 
 		return View(listJobModel);
-		//return View(listJob);
 	}
 
 	// Admin/JobClosed
@@ -78,7 +93,7 @@ public class AdminController : Controller
 				Location = job.Location,
 				JobPostedDate = job.JobPostedDate,
 				JobExpiredDate = job.JobExpiredDate,
-				CandidateCout = job.candidateCount,
+				CandidateCout = job.CandidateCount,
 			};
 			listJob.Add(data);
 		}
@@ -91,6 +106,7 @@ public class AdminController : Controller
 		Job objJob = (await _context.Jobs!.FindAsync(id))!;
 
 		objJob.IsJobAvailable = false;
+		objJob.CandidateCount = 0;
 		await _context.SaveChangesAsync();
 
 		TempData["success"] = "Successfully Close a Job";
@@ -103,22 +119,22 @@ public class AdminController : Controller
 		Job objJob = _context.Jobs!.Find(id)!;
 
 		objJob.IsJobAvailable = true;
+		objJob.CandidateCount = 0;
 		await _context.SaveChangesAsync();
 
 		TempData["success"] = "Successfully Activate a Job";
 		return Redirect("/Admin/JobClosed");
 	}
 
-	// Add Feature, if candidate apply job > 0, job can't be closed
-	[HttpDelete]
+	[HttpPost]
 	public async Task<IActionResult> DeleteJob(int id)
 	{
-		// if ((await _context.UserJobs!.Where(cj => cj.JobId == id).AnyAsync())!)
-		// {
-		// 	TempData["warning"] = "Job can't be closed because there are candidates who have applied for this job.";
-		// 	//return Redirect("/Admin");
-		// 	return Redirect("/Admin/JobClosed");
-		// }
+		if ((await _context.UserJobs!.Where(cj => cj.JobId == id).AnyAsync())!)
+		{
+			TempData["warning"] = "Job can't be closed because there are candidates who have applied for this job.";
+			//return Redirect("/Admin");
+			return Redirect("/Admin/JobClosed");
+		}
 
 		Job objJob = _context.Jobs!.Find(id)!;
 		_context.Jobs.Remove(objJob);
@@ -140,7 +156,7 @@ public class AdminController : Controller
 		}
 
 		ViewBag.AdminName = user.Name;
-
+		ViewBag.Departments = GetAvailableDepartments(_context);
 		return View();
 	}
 
@@ -160,11 +176,16 @@ public class AdminController : Controller
 			JobDescription = objJob.JobDescription,
 			JobExpiredDate = objJob.JobExpiredDate,
 			JobRequirement = objJob.JobRequirement!.Replace("\r\n", "\n"),
-			JobPostedDate = DateTime.Today,
+			JobDepartment = objJob.JobDepartment,
+			Department = _context.Departments.FirstOrDefault(x => x.DepartmentName == objJob.JobDepartment),
+			JobMinEducation = objJob.JobMinEducation,
+			EmploymentType = objJob.EmploymentType,
+			JobPostedDate = DateTime.Now,
 			Location = objJob.Location,
 			IsJobAvailable = true,
 			User = user,
 		};
+
 		_context.Jobs!.Add(newJob);
 		await _context.SaveChangesAsync();
 
@@ -183,6 +204,7 @@ public class AdminController : Controller
 		}
 
 		ViewBag.AdminName = user.Name;
+		ViewBag.Departments = GetAvailableDepartments(_context);
 
 		Job objJob = (await _context.Jobs!.FindAsync(id))!;
 
@@ -192,6 +214,9 @@ public class AdminController : Controller
 			JobTitle = objJob.JobTitle,
 			JobDescription = objJob.JobDescription,
 			JobRequirement = objJob.JobRequirement!.Replace("\r\n", "\n"),
+			JobDepartment = objJob.JobDepartment,
+			JobMinEducation = objJob.JobMinEducation,
+			EmploymentType = objJob.EmploymentType,
 			Location = objJob.Location,
 			JobPostedDate = objJob.JobPostedDate,
 			JobExpiredDate = objJob.JobExpiredDate,
@@ -215,6 +240,10 @@ public class AdminController : Controller
 		updateJob.JobDescription = objJob.JobDescription;
 		updateJob.JobExpiredDate = objJob.JobExpiredDate;
 		updateJob.JobRequirement = objJob.JobRequirement;
+		updateJob.JobDepartment = objJob.JobDepartment;
+		updateJob.Department = _context.Departments.FirstOrDefault(x => x.DepartmentName == objJob.JobDepartment);
+		updateJob.JobMinEducation = objJob.JobMinEducation;
+		updateJob.EmploymentType = objJob.EmploymentType;
 		updateJob.Location = objJob.Location;
 
 		await _context.SaveChangesAsync();
@@ -392,6 +421,54 @@ public class AdminController : Controller
 	}
 
 	[HttpPost]
+	public async Task<IActionResult> SaveRejectionEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailReject = objEmailTemplate.EmailReject;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "Rejection Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> SaveHREmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailHR = objEmailTemplate.EmailHR;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "HR Interview Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> SaveUserEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailUser = objEmailTemplate.EmailUser;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "User Interview Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+	
+	[HttpPost]
+	public async Task<IActionResult> SaveOfferEmail (EmailTemplate objEmailTemplate)
+	{
+		Job objJob = (await _context.Jobs!.FindAsync(objEmailTemplate.JobId))!;
+		objJob.EmailOffering = objEmailTemplate.EmailOffering;
+
+		await _context.SaveChangesAsync();
+
+		TempData["success"] = "Offering Email Template Saved";
+		return Redirect($"/Admin/TemplateEmail/{objEmailTemplate.JobId}");
+	}
+
+	[HttpPost]
 	public async Task<IActionResult> DownloadCV(string UserId, int JobId)
 	{
 		UserJob CJ = (await _context.UserJobs!
@@ -414,7 +491,6 @@ public class AdminController : Controller
 		int statusInJob = (int)Enum.Parse(typeof(ProcessType), UJ.StatusInJob!);
 		statusInJob++;
 		UJ.StatusInJob = $"{(ProcessType)statusInJob}";
-		// SendEmailRejection(objUser, UJ, objJob.JobTitle!);
 
 		await _context.SaveChangesAsync();
 
@@ -444,7 +520,7 @@ public class AdminController : Controller
 
 		UJ.StatusInJob = $"{ProcessType.Rejected}";
 
-		SendEmailRejection(objUser, UJ, objJob.JobTitle!);
+		await SendEmailRejection(objUser, UJ, objJob.JobTitle!);
 
 		await _context.SaveChangesAsync();
 
@@ -455,8 +531,8 @@ public class AdminController : Controller
 	[HttpPost]
 	public async Task<ActionResult> SendHRInterview(string UserId, int JobId, DateTime date, DateTime time, string location)
 	{
-		string myEmailAccount = "projectadmreruiter@gmail.com";
-		string myEmailPassword = "qucnsmdddmobmnfo";
+		var emailMessage = new MimeMessage();
+		emailMessage.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.FromAddress));
 
 		UserJob UJ = (await _context.UserJobs!
 							 .FirstOrDefaultAsync(cj => cj.JobId == JobId && cj.UserId == UserId))!;
@@ -470,36 +546,37 @@ public class AdminController : Controller
 
 		string emailTemplate = UJ.Job!.EmailHR!;
 		string emailBody = emailTemplate
-				.Replace("[Applicant's Name]", objUser.Name)
-				.Replace("[Job Title]", objJob.JobTitle)
-				.Replace("[Date]", UJ.DateHRInterview.ToString())
-				.Replace("[Time]", UJ.TimeHRInterview.ToString())
+				.Replace("[Name]", objUser.Name)
+				.Replace("[Job]", objJob.JobTitle)
+				.Replace("[Date]", UJ.DateHRInterview?.ToString("dddd, dd MMM yyy"))
+				.Replace("[Time]", UJ.TimeHRInterview?.ToString("HH:mm"))
 				.Replace("[Location]", UJ.LocationHRInterview);
 
-		//make instance message
-		MailMessage message = new MailMessage
+		emailMessage.To.Add(new MailboxAddress("", objUser.Email));
+		emailMessage.Subject = $"UPDATE Recruitment for {objJob.JobTitle}";
+		emailMessage.Body = new TextPart("html")
 		{
-			From = new MailAddress(myEmailAccount)
+			Text = emailBody
 		};
 
-		//add recipient
-		message.To.Add(new MailAddress($"{objUser.Email}"));
-		// message.To.Add(new MailAddress("ignatius.c.k@gmail.com"));
+		using var client = new SmtpClient();
 
-		// add subject and body
-		message.Subject = $"UPDATE Recruitment for {objJob.JobTitle}";
-		message.Body = emailBody;
-
-		var SmtpClient = new SmtpClient("smtp.gmail.com")
+		try
 		{
-			Port = 587,
-			Credentials = new NetworkCredential(myEmailAccount, myEmailPassword),
-			EnableSsl = true,
-		};
-
-		//send message
-		SmtpClient.Send(message);
-		await _context.SaveChangesAsync();
+			await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+			await client.AuthenticateAsync(_mailSettings.Username, _mailSettings.Password);
+			await client.SendAsync(emailMessage);
+		}
+		catch (SocketException)
+		{
+			TempData["warning"] = "Error sending the email due to connection issues";
+			return Redirect($"/Admin/RecruitmentProcess/{JobId}");
+		}
+		finally
+		{
+			await client.DisconnectAsync(true);
+			await _context.SaveChangesAsync();
+		}
 
 		TempData["success"] = "Email sent";
 		return Redirect($"/Admin/RecruitmentProcess/{JobId}");
@@ -508,8 +585,8 @@ public class AdminController : Controller
 	[HttpPost]
 	public async Task<ActionResult> SendUserInterview(string UserId, int JobId, DateTime date, DateTime time, string location)
 	{
-		string myEmailAccount = "projectadmreruiter@gmail.com";
-		string myEmailPassword = "qucnsmdddmobmnfo";
+		var emailMessage = new MimeMessage();
+		emailMessage.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.FromAddress));
 
 		UserJob UJ = (await _context.UserJobs!
 							 .FirstOrDefaultAsync(cj => cj.JobId == JobId && cj.UserId == UserId))!;
@@ -524,105 +601,122 @@ public class AdminController : Controller
 
 		string emailTemplate = UJ.Job!.EmailUser!;
 		string emailBodyCandidate = emailTemplate
-				.Replace("[Applicant's Name]", objUser.Name)
-				.Replace("[Job Title]", objJob.JobTitle)
-				.Replace("[Date]", UJ.DateUserInterview.ToString())
-				.Replace("[Time]", UJ.TimeUserInterview.ToString())
+				.Replace("[Name]", objUser.Name)
+				.Replace("[Job]", objJob.JobTitle)
+				.Replace("[Date]", UJ.DateUserInterview?.ToString("dddd, dd MMM yyy"))
+				.Replace("[Time]", UJ.TimeUserInterview?.ToString("HH:mm"))
 				.Replace("[Location]", UJ.LocationUserInterview);
 
-		string emailBodyUser =
-		"Interview User \n \n" +
-		"Details  \n" +
-		$"Name      : {objUser.Name} \n" +
-		$"Edu       : {objCandidate.LastEducation} \n" +
-		$"GPA       : {objCandidate.GPA} \n" +
-		$"Time      : {UJ.TimeUserInterview} \n" +
-		$"Date      : {UJ.DateUserInterview} \n" +
-		$"Location  : {UJ.LocationUserInterview} \n";
-
-		//make instance message
-		MailMessage messageCandidate = new MailMessage
+		emailMessage.To.Add(new MailboxAddress("", objUser.Email));
+		emailMessage.Subject = $"UPDATE Recruitment for {objJob.JobTitle}";
+		emailMessage.Body = new TextPart("html")
 		{
-			From = new MailAddress(myEmailAccount)
+			Text = emailBodyCandidate
 		};
 
-		MailMessage messageUser = new MailMessage
+		using var client = new SmtpClient();
+
+		try
 		{
-			From = new MailAddress(myEmailAccount)
-		};
-
-		//add recipient
-		// messageCandidate.To.Add(new MailAddress("ignatius.c.k@gmail.com"));
-		// messageUser.To.Add(new MailAddress("ignatius.adse@gmail.com"));
-		messageCandidate.To.Add(new MailAddress($"{objUser.Email}"));
-		messageUser.To.Add(new MailAddress("projectadmreruiter@gmail.com"));
-		// message.To.Add(new MailAddress("ignatius.c.k@gmail.com"));
-
-		// add subject and body
-		messageCandidate.Subject = $"User Interview : {objJob.JobTitle}";
-		messageCandidate.Body = emailBodyCandidate;
-
-		messageUser.Subject = $"User Interview : {objJob.JobTitle}";
-		messageUser.Body = emailBodyUser;
-
-		var smtpClient = new SmtpClient("smtp.gmail.com")
+			await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+			await client.AuthenticateAsync(_mailSettings.Username, _mailSettings.Password);
+			await client.SendAsync(emailMessage);
+		}
+		catch (SocketException)
 		{
-			Port = 587,
-			Credentials = new NetworkCredential(myEmailAccount, myEmailPassword),
-			EnableSsl = true,
-		};
-
-		//send message
-		smtpClient.Send(messageCandidate);
-		smtpClient.Send(messageUser);
-
-		await _context.SaveChangesAsync();
+			TempData["warning"] = "Error sending the email due to connection issues";
+			return Redirect($"/Admin/RecruitmentProcess/{JobId}");
+		}
+		finally
+		{
+			await client.DisconnectAsync(true);
+			await _context.SaveChangesAsync();
+		}
 
 		TempData["success"] = "Email sent";
 		return Redirect($"/Admin/RecruitmentProcess/{JobId}");
 	}
 
-	private void SendEmailRejection(User objUser, UserJob UJ, string jobTitle)
+	[HttpPost]
+	public async Task<ActionResult> SendOffering(string UserId, int JobId)
 	{
-		string myEmailAccount = "projectadmreruiter@gmail.com";
-		string myEmailPassword = "qucnsmdddmobmnfo";
+		var emailMessage = new MimeMessage();
+		emailMessage.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.FromAddress));
+
+		UserJob UJ = (await _context.UserJobs!
+							 .FirstOrDefaultAsync(cj => cj.JobId == JobId && cj.UserId == UserId))!;
+
+		User objUser = (await _context.Users!.FindAsync(UJ.UserId))!;
+		Job objJob = (await _context.Jobs!.FindAsync(UJ.JobId))!;
+
+		string emailTemplate = UJ.Job!.EmailOffering!;
+		string emailBodyCandidate = emailTemplate
+				.Replace("[Name]", objUser.Name)
+				.Replace("[Job]", objJob.JobTitle);
+
+		emailMessage.To.Add(new MailboxAddress("", objUser.Email));
+		emailMessage.Subject = $"UPDATE Recruitment for {objJob.JobTitle}";
+		emailMessage.Body = new TextPart("html")
+		{
+			Text = emailBodyCandidate
+		};
+
+		using var client = new SmtpClient();
+
+		try
+		{
+			await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+			await client.AuthenticateAsync(_mailSettings.Username, _mailSettings.Password);
+			await client.SendAsync(emailMessage);
+		}
+		catch (SocketException)
+		{
+			TempData["warning"] = "Error sending the email due to connection issues";
+			return Redirect($"/Admin/RecruitmentProcess/{JobId}");
+		}
+		finally
+		{
+			await client.DisconnectAsync(true);
+			await _context.SaveChangesAsync();
+		}
+
+		TempData["success"] = "Email sent";
+		return Redirect($"/Admin/RecruitmentProcess/{JobId}");
+	}
+	
+	private async Task SendEmailRejection(User objUser, UserJob UJ, string jobTitle)
+	{
+		var emailMessage = new MimeMessage();
+		emailMessage.From.Add(new MailboxAddress(_mailSettings.FromName, _mailSettings.FromAddress));
 
 		string emailTemplate = UJ.Job!.EmailReject!;
 		string emailBody = emailTemplate
-				.Replace("[Applicant's Name]", objUser.Name)
-				.Replace("[Job Title]", jobTitle);
+				.Replace("[Name]", objUser.Name)
+				.Replace("[Job]", jobTitle);
 
-		//make instance message
-		MailMessage message = new MailMessage
+		emailMessage.To.Add(new MailboxAddress("", objUser.Email));
+		emailMessage.Subject = $"UPDATE Recruitment for {jobTitle}";
+		emailMessage.Body = new TextPart("html")
 		{
-			From = new MailAddress(myEmailAccount)
+			Text = emailBody
 		};
 
-		//add recipient
-		message.To.Add(new MailAddress($"{objUser.Email}"));
+		using var client = new SmtpClient();
 
-		// add subject and body
-		message.Subject = $"UPDATE Recruitment for {jobTitle}";
-		message.Body = emailBody;
-
-		var SmtpClient = new SmtpClient("smtp.gmail.com")
+		try
 		{
-			Port = 587,
-			Credentials = new NetworkCredential(myEmailAccount, myEmailPassword),
-			EnableSsl = true,
-		};
-
-		//send message
-		SmtpClient.Send(message);
+			await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+			await client.AuthenticateAsync(_mailSettings.Username, _mailSettings.Password);
+			await client.SendAsync(emailMessage);
+		}
+		catch (SocketException)
+		{
+			TempData["warning"] = "Error sending the email due to connection issues";
+		}
+		finally
+		{
+			await client.DisconnectAsync(true);
+			await _context.SaveChangesAsync();
+		}
 	}
-
-	// [HttpPost]
-	// public async Task<IActionResult> TemplateEmail(EmailTemplate email)
-	// {
-	//     Job objJob = (await _db.Jobs!.FindAsync(email.JobId))!;
-	//     objJob.EmailHR = email.EmailHR;
-	//     await _db.SaveChangesAsync();
-
-	//     return View(email);
-	// }
 }

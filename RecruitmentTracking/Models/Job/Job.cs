@@ -25,7 +25,14 @@ public class Job
     [DataType(DataType.Date)]
     public DateTime? JobExpiredDate { get; set; }
 
-    public int candidateCount { get; set; }
+    [Required]
+    public string? JobMinEducation { get; set; }
+    [Required]
+    public string? JobDepartment { get; set; }
+    [Required]
+    public string? EmploymentType { get; set; }
+
+    public int CandidateCount { get; set; }
 
     public string? ProcessStatus { get; set; }
 
@@ -39,5 +46,7 @@ public class Job
 
     [ForeignKey("User")]
     public string? AdminId { get; set; }
+    [ForeignKey("DepartmentId")]
+    public Department? Department{ get; set; }
     public User? User { get; set; }
 }

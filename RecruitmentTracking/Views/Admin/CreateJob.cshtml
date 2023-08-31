@@ -9,19 +9,39 @@
         new SelectListItem { Value = "Semarang", Text = "Semarang" },
         new SelectListItem { Value = "Bandung", Text = "Bandung" }
     };
+    var dropdownOptionsDepartment = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Engineering", Text = "Engineering" },
+        new SelectListItem { Value = "Human Resource", Text = "Human Resource" },
+        new SelectListItem { Value = "IT", Text = "IT" },
+        new SelectListItem { Value = "Sales / Marketing", Text = "Sales / Marketing" }
+    };
+    var departmentDropdown = ViewBag.Department as List<SelectListItem>;
+    var dropdownOptionsMinEducation = new List<SelectListItem>
+    {
+        new SelectListItem{ Value = "High School Degree", Text = "High School Degree" },
+        new SelectListItem{ Value = "Bachelor Degree", Text = "Bachelor Degree" },
+        new SelectListItem{ Value = "Diploma Degree", Text = "Diploma Degree" }
+    };
+    var dropdownOptionsEmploymentType = new List<SelectListItem>
+    {
+        new SelectListItem{ Value = "Full-Time", Text = "Full-Time" },
+        new SelectListItem{ Value = "Part-Time", Text = "Part-Time" },
+        new SelectListItem{ Value = "Internship", Text = "Internship" }
+    };
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <main class="container flex-1 bg-gray-100 p-8 mt-5">
     <div class="flex items-center justify-center">
-        <h1 class="text-2xl font-semibold">Create Job</h1>
+        <h1 class="text-2xl font-bold font-family: Arial Helvetica sans-serif">CREATE JOB</h1>
     </div>
 
     <div class="col-span-4">
         <div class="d-flex">
-            
-            <main class="p-1" style="height: 100vh; width: 80%">
+        
+            <main class="p-1" style="width: 100%; max-width: 800px; margin: 0 auto;">
         <div class="py-2 mt-2">
             <div class="my-1">
             <br>
@@ -31,38 +51,52 @@
                     <label for="JobPosition" class="form-label">Job Position</label>
                     @Html.TextBoxFor(m => m.JobTitle, new { @class="form-control round-lg"})
                 </div>
+                
                 <div class="mb-3">
                     <label for="JobDescription" class="form-label">Job Description</label>
                     @Html.TextAreaFor(m => m.JobDescription, new { @class="form-control round-lg"})
                 </div>
+
                 <div class="mb-3">
                     <label for="JobRequirement" class="form-label">Job Requirement</label>
                     @Html.TextAreaFor(m => m.JobRequirement, new { @class="form-control round-lg"})
                 </div>
+
                 <div class="mb-3">
-                    
-                    
-                       <div class="form-group">
-                            <label for="JobExpiredDate" class="form-label">Job Expired Date</label>
-                            <div>
-                                @Html.TextBoxFor(model => model.JobExpiredDate, new { @class = "form-control round-lg", @readonly = "readonly", placeholder = "Select Date", id = "datepicker" })
-                                @Html.ValidationMessageFor(model => model.JobExpiredDate, "", new { @class = "text-danger" })
-                            </div>
+                    <div class="form-group">
+                        <label for="JobExpiredDate" class="form-label">Job Expired Date</label>
+                        <div>
+                            @Html.TextBoxFor(model => model.JobExpiredDate, new { @class = "form-control round-lg", @readonly = "readonly", placeholder = "Select Date", id = "datepicker" })
+                            @Html.ValidationMessageFor(model => model.JobExpiredDate, "", new { @class = "text-danger" })
                         </div>
-                   
+                    </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="JobRequirement" class="form-label">Office Location</label>  
+                    <label for="MinEdu" class="form-label">Min Education</label>  
+                    @Html.DropDownListFor(m => m.JobMinEducation, new SelectList(dropdownOptionsMinEducation, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
+                </div>
+
+                <div class="mb-3">
+                    <label for="Department" class="form-label">Department</label>  
+                    @Html.DropDownListFor(m => m.JobDepartment, new SelectList(ViewBag.Departments, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
+                </div>
+
+                <div class="mb-3">
+                    <label for="EmployType" class="form-label">Employment Type</label>  
+                    @Html.DropDownListFor(m => m.EmploymentType, new SelectList(dropdownOptionsEmploymentType, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
+                </div>
+
+                <div class="mb-3">
+                    <label for="Location" class="form-label">Office Location</label>  
                     @Html.DropDownListFor(m => m.Location, new SelectList(dropdownOptions, "Value", "Text"), "Select an option", new { @class = "form-control round-lg" })
                 </div>
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
                     @* <button class="btn bg-green-500 text-white hover:bg-green-600 rounded-lg" type="submit">Preview</button> *@
                     <button class="btn bg-blue-500 text-white hover:bg-blue-600 rounded-lg" type="submit">Create</button>
                 </div>
             }
-
             </div>
         </div>
     </main>

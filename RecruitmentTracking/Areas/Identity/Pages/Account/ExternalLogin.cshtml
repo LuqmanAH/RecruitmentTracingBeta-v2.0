@@ -1,32 +1,45 @@
 ﻿@page
 @model ExternalLoginModel
+
+<br>
+<br>
+<br>
+<br>
 @{
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
-<h2 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h2>
+@* <h1>@ViewData["Title"]</h1>
+<h2 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h2> *@
 <hr />
+<p><br></p>
+<p><br></p>
+<p><br></p>
+<p><br></p>
 
-<p id="external-login-description" class="text-info">
-    You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
-    Please enter an email address for this site below and click the Register button to finish
-    logging in.
+<p id="external-login-description" class="text-dark" style="text-align: center;">
+    You&apos;ve successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
 </p>
+<p class="text-dark" style="text-align: center;">
+    Please enter an email address for this site below and click the Register button to finish logging in.
+</p>
+<br>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+<div class="row" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <div class="col-md-4" style="text-align: center;">
+        <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post"style="text-align: center;">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
+            <div class="form-floating mb-3" style="text-align: center;">
                 <input asp-for="Input.Email" class="form-control" autocomplete="email" placeholder="Please enter your email."/>
                 <label asp-for="Input.Email" class="form-label"></label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <button type="submit" class="w-100 btn btn-lg custom-btn btn-warning btn-primary" style="text-align: center;">Register</button>
         </form>
+        <br>
     </div>
 </div>
+<div class="my-5"></div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

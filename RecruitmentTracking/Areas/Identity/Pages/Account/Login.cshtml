@@ -13,6 +13,7 @@
 <div class="container" style="justify-content: center; padding-top: 70pt;">
 	<div class="row">
 		<div class="col-md-4 offset-md-4 shadow-lg p-3 mb-5 bg-white rounded">
+			
 			<h4 style="text-align:center" class=" font-bold text-xl mb-3">Sign in to your account</h4>
 
 			<form id="account" method="post">
@@ -73,14 +74,14 @@
 					else
 					{
 						<form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-							<div class="col-md-6">
+							<div class="col" style="text-align:center">
 								<p>
 									@foreach (var provider in Model.ExternalLogins!)
 									{
-											<button type="submit" class="btn text-white bg-amber-500 hover:hover:bg-amber-600 me-2 rounded-lg mt-3" name="provider" value="@provider.Name"
-												title="Log in using your @provider.DisplayName account">
-											Sign in with
-											@provider.DisplayName
+										<button type="submit" class="btn text-black me-2 rounded-lg mt-3" name="provider" value="@provider.Name"
+											title="Log in using your @provider.DisplayName account">
+											<a class="bi bi-google" style="color: orange;"> Google</a>
+											@* @provider.DisplayName *@
 										</button>
 									}
 								</p>
