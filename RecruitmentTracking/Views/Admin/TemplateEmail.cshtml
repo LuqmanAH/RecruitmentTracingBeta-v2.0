@@ -1,16 +1,19 @@
 @model EmailTemplate
 
 <div class="container bg-gray-100 p-10">
-  <p class="font-bold text-3xl mt-8 ms-56">Template Email</p>
+  <p class="font-bold text-3xl mt-8 ms-auto">Template Email</p>
 
   @using(Html.BeginForm("SaveRejectionEmail", "Admin", FormMethod.Post))
   {
-    <p class="font-bold text-xl text-muted text-muted text-muted text-muted text-muted text-muted text-muted text-muted mt-2 ms-56">Rejection Template Email</p>
+    <p class="font-bold text-xl text-muted text-muted text-muted text-muted text-muted text-muted text-muted text-muted mt-2 ms-20">Rejection Template Email</p>
     <div class="flex justify-center items-center mt-2 mb-5">
       <div class="">
         <div class="form-control">
           @* <textarea class="form-control w-[1000px] h-[300px]" id="exampleFormControlTextarea1" rows="3" placeholder="" value=@Model.EmailReject ></textarea> *@
           @Html.TextAreaFor(m => m.EmailReject, new { @class="form-control w-[1000px] h-[300px]", id = "AdministrationTemplateEmail" })
+          <p><strong>Note :</strong></p>
+          <p style="font-size: small;">1. [Name] = Menampilkan Nama</p>
+          <p style="font-size: small;">2. [Job]  = Menampilkan Posisi yang dilamar</p>
           <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-3 mb-2">
             <button onclick="copyTextareaValue('AdministrationTemplateEmail')" class="btn bg-green-500 text-white hover:bg-green-600 rounded-lg" type="button">Copy Template</button>
             @Html.HiddenFor(m => m.JobId)
@@ -23,12 +26,18 @@
 
   @using(Html.BeginForm("SaveHREmail", "Admin", FormMethod.Post))
   {
-    <p class="font-bold text-xl text-muted text-muted text-muted text-muted text-muted text-muted text-muted text-muted mt-12 ms-56">HR Interview Template Email</p>
+    <p class="font-bold text-xl text-muted text-muted text-muted text-muted text-muted text-muted text-muted text-muted mt-12 ms-20">HR Interview Template Email</p>
     <div class="flex justify-center items-center mt-2 mb-5">
       <div class="">
         <div class="form-control">
           @* <textarea class="form-control w-[1000px] h-[300px]" id="exampleFormControlTextarea1" rows="3" placeholder="" value= @Model.EmailHR ></textarea> *@
           @Html.TextAreaFor(m => m.EmailHR, new { @class = "form-control w-[1000px] h-[300px]", id = "HRInterviewTemplateEmail" })
+          <p><strong>Note :</strong></p>
+          <p style="font-size: small;">1. [Name] = Menampilkan Nama</p>
+          <p style="font-size: small;">2. [Job]  = Menampilkan Posisi yang dilamar</p>
+          <p style="font-size: small;">3. [Date] = Menampilkan Tanggal Interview</p>
+          <p style="font-size: small;">4. [Time] = Menampilkan Waktu Interview</p>
+          <p style="font-size: small;">5. [Location]  = Menampilkan Lokasi Interview</p>
           <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-3 mb-2">
             <button onclick="copyTextareaValue('HRInterviewTemplateEmail')" class="btn bg-green-500 text-white hover:bg-green-600 rounded-lg" type="button">Copy Template</button>
             @Html.HiddenFor(m => m.JobId)
@@ -41,12 +50,18 @@
   
   @using(Html.BeginForm("SaveUserEmail", "Admin", FormMethod.Post))
   {
-    <p class="font-bold text-xl text-muted text-muted text-muted text-muted text-muted text-muted text-muted text-muted mt-12 ms-56">User Interview Template Email</p>
+    <p class="font-bold text-xl text-muted text-muted text-muted text-muted text-muted text-muted text-muted text-muted mt-12 ms-20">User Interview Template Email</p>
     <div class="flex justify-center items-center mt-2 mb-5">
       <div class="">
         <div class="form-control">
           @* <textarea class="form-control w-[1000px] h-[300px]" id="exampleFormControlTextarea1" rows="3" placeholder="" value= @Model.EmailUser ></textarea> *@
           @Html.TextAreaFor(m => m.EmailUser, new { @class = "form-control w-[1000px] h-[300px]",id = "InterviewTemplateEmail" })
+          <p><strong>Note :</strong></p>
+          <p style="font-size: small;">1. [Name] = Menampilkan Nama</p>
+          <p style="font-size: small;">2. [Job]  = Menampilkan Posisi yang dilamar</p>
+          <p style="font-size: small;">3. [Date] = Menampilkan Tanggal Interview</p>
+          <p style="font-size: small;">4. [Time] = Menampilkan Waktu Interview</p>
+          <p style="font-size: small;">5. [Location]  = Menampilkan Lokasi Interview</p>
           <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-3 mb-2">
             <button onclick="copyTextareaValue('InterviewTemplateEmail')" class="btn bg-green-500 text-white hover:bg-green-600 rounded-lg" type="button">Copy Template</button>
             @Html.HiddenFor(m => m.JobId)
@@ -59,12 +74,15 @@
 
   @using(Html.BeginForm("SaveOfferEmail", "Admin", FormMethod.Post))
   {
-    <p class="font-bold text-xl text-muted text-muted text-muted text-muted text-muted text-muted text-muted text-muted mt-12 ms-56">Offering Template Email</p>
+    <p class="font-bold text-xl text-muted text-muted text-muted text-muted text-muted text-muted text-muted text-muted mt-12 ms-20">Offering Template Email</p>
     <div class="flex justify-center items-center mt-2 mb-5">
       <div class="">
         <div class="form-control">
           @* <textarea class="form-control w-[1000px] h-[300px]" id="exampleFormControlTextarea1" rows="3" placeholder="" value= @Model.EmailOffering ></textarea> *@
           @Html.TextAreaFor(m => m.EmailOffering, new { @class = "form-control w-[1000px] h-[300px]", id = "OfferingTemplateEmail" })
+          <p><strong>Note :</strong></p>
+          <p style="font-size: small;">1. [Name] = Menampilkan Nama</p>
+          <p style="font-size: small;">2. [Job]  = Menampilkan Posisi yang dilamar</p>
           <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3 mb-2">
             <button onclick="copyTextareaValue('OfferingTemplateEmail')" class="btn bg-green-500 text-white hover:bg-green-600 rounded-lg" type="button">Copy Template</button>
             @Html.HiddenFor(m => m.JobId)
