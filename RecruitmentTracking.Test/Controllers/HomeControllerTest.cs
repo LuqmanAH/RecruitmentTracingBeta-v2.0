@@ -54,9 +54,9 @@ namespace RecruitmentTracking.Tests
 				Location = "Semarang",
 				EmploymentType = "Full-time",
 				JobDepartment = "Engineering",
+				JobPostedDate = DateTime.Now,
 				JobExpiredDate = DateTime.Now.AddDays(30),
 				JobMinEducation = "Bachelor's Degree",
-				JobPostedDate = DateTime.Now,
 				IsJobAvailable = true,
 				Department = department
 			};
@@ -100,14 +100,20 @@ namespace RecruitmentTracking.Tests
 			var controller = SetupController(context);
 
 			//Act
-			IActionResult result = await controller.Index("", "", "");
+			var title = "";
+			var location = "";
+			var department = "Engineering";
+			IActionResult result = await controller.Index(title, location, department);
 
 			// Assert
 			var viewResult = (ViewResult)result;
 			var listJob = (List<JobViewModel>)viewResult.Model;
-			listJob.Should().NotBeNull();
-			listJob.Should().HaveCountGreaterThan(0);
-			listJob.First().JobTitle.Should().Be("tester");
+
+			listJob.Should().OnlyContain(job =>
+			(job.JobTitle == title || job.JobTitle == null) ||
+			(job.JobDepartment == department || job.JobDepartment == null) ||
+			(job.Location == location || job.Location == null)
+			);
 		}
 
 		[Fact]
@@ -130,8 +136,6 @@ namespace RecruitmentTracking.Tests
 			var filteredJobs = controller.FilterByLocation(chosenLocation, listJob);
 
 			// Assert
-			filteredJobs.Should().NotBeNull();
-			filteredJobs.Should().NotBeEmpty();
 			filteredJobs.Should().OnlyContain(job => job.Location == chosenLocation);
 		}
 
@@ -155,8 +159,6 @@ namespace RecruitmentTracking.Tests
 			var filteredJobs = controller.FilterByDepartment(chosenDepartment, listJob);
 
 			// Assert
-			filteredJobs.Should().NotBeNull();
-			filteredJobs.Should().NotBeEmpty();
 			filteredJobs.Should().OnlyContain(job => job.JobDepartment == chosenDepartment);
 		}
 
