@@ -24,62 +24,6 @@ public class HomeController : Controller
 		_context = context;
 		_userManager = userManager;
 	}
-//! Unused
-	// [HttpGet]
-	// public async Task<IActionResult> Index()
-	// {
-	// 	User user = (await _userManager.GetUserAsync(User))!;
-
-	// 	if (user != null)
-	// 	{
-	// 		if (await _userManager.IsInRoleAsync(user, "Admin")) return Redirect("/Admin");
-	// 		Candidate objCandidate = (await _context.Candidates.FirstOrDefaultAsync(c => c.UserId == user.Id))!;
-	// 		if (objCandidate == null)
-	// 		{
-	// 			TempData["warning"] = "Please complete your data";
-	// 			return Redirect("/Profile");
-	// 		}
-	// 	}
-
-	// 	ViewBag.Subtitle = "Opportunities";
-	// 	ViewBag.Message = "See our available opportunities below";
-
-	// 	List<Department> jobDepartments = new List<Department>();
-	// 	foreach (Department department in _context.Departments!.ToList())
-	// 	{
-	// 		Department dept = new()
-	// 		{
-	// 			DepartmentId = department.DepartmentId,
-	// 			DepartmentName = department.DepartmentName
-	// 		};
-	// 		jobDepartments.Add(dept);
-	// 	}
-
-	// 	ViewBag.Departments = jobDepartments;
-
-	// 	List<JobViewModel> listJob = new();
-	// 	foreach (Job job in _context.Jobs!.Where(j => j.IsJobAvailable).ToList())
-	// 	{
-	// 		JobViewModel data = new()
-	// 		{
-	// 			JobId = job.JobId,
-	// 			JobTitle = job.JobTitle,
-	// 			JobDescription = job.JobDescription,
-	// 			JobRequirement = job.JobRequirement,
-	// 			Location = job.Location,
-	// 			JobDepartment = job.JobDepartment,
-	// 			JobMinEducation = job.JobMinEducation,
-	// 			EmploymentType = job.EmploymentType,
-	// 			JobPostedDate = job.JobPostedDate,
-	// 			JobExpiredDate = job.JobExpiredDate,
-	// 			Department = job.Department,
-	// 			CandidateCout = job.CandidateCount,
-	// 		};
-
-	// 		listJob.Add(data);
-	// 	}
-	// 	return View(listJob);
-	// }
 
 	[HttpGet]
 	public async Task<IActionResult> Index(string searchString, string? chosenLocation = null, string? chosenDepartment = null)
@@ -97,8 +41,6 @@ public class HomeController : Controller
 			}
 		}
 		
-		Console.WriteLine("\n\nLOCATION CHOSEN: " + chosenLocation);
-		Console.WriteLine("\n\nDEPARTMENT CHOSEN: " + chosenDepartment);
 		var jobs = from j in _context.Jobs select j;
 		List<JobViewModel> listJob = new();
 
@@ -159,7 +101,6 @@ public class HomeController : Controller
 		}
 		else 
 		{
-			// jika seacrhstring kosong, setiap pekerjaan ditampilkan
 			ViewBag.Subtitle = "Opportunities";
 			ViewBag.Message = "See our available opportunities below";
 			foreach (Job job in _context.Jobs!.Where(j => j.IsJobAvailable).ToList())

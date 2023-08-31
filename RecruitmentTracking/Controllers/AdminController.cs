@@ -52,7 +52,6 @@ public class AdminController : Controller
 		foreach (Job job in listObjJob)
 		{
 			int candidateCount = _context.UserJobs!.Where(c => c.JobId == job.JobId).Count();
-			// job.CandidateCount = candidateCount;
 			JobViewModel modelView = new()
 			{
 				JobId = job.JobId,
@@ -68,11 +67,7 @@ public class AdminController : Controller
 		}
 		await _context.SaveChangesAsync();
 
-		Console.WriteLine(_mailSettings.Username);
-		Console.WriteLine(_mailSettings.Password);
-
 		return View(listJobModel);
-		//return View(listJob);
 	}
 
 	// Admin/JobClosed
@@ -131,7 +126,6 @@ public class AdminController : Controller
 		return Redirect("/Admin/JobClosed");
 	}
 
-	// Add Feature, if candidate apply job > 0, job can't be closed
 	[HttpPost]
 	public async Task<IActionResult> DeleteJob(int id)
 	{
@@ -191,8 +185,6 @@ public class AdminController : Controller
 			IsJobAvailable = true,
 			User = user,
 		};
-
-		// newJob.Department = _context.Departments.FirstOrDefault(x => x.)
 
 		_context.Jobs!.Add(newJob);
 		await _context.SaveChangesAsync();
