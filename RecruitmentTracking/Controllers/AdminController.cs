@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
 using MimeKit;
 using System.Net.Sockets;
 using MailKit.Net.Smtp;
-
 using RecruitmentTracking.Models;
 using RecruitmentTracking.Data;
 using Microsoft.EntityFrameworkCore;
@@ -556,8 +554,8 @@ public class AdminController : Controller
 
 		string emailTemplate = UJ.Job!.EmailHR!;
 		string emailBody = emailTemplate
-				.Replace("[Applicant's Name]", objUser.Name)
-				.Replace("[Job Title]", objJob.JobTitle)
+				.Replace("[Name]", objUser.Name)
+				.Replace("[Job]", objJob.JobTitle)
 				.Replace("[Date]", UJ.DateHRInterview?.ToString("dddd, dd MMM yyy"))
 				.Replace("[Time]", UJ.TimeHRInterview?.ToString("HH:mm"))
 				.Replace("[Location]", UJ.LocationHRInterview);
@@ -611,8 +609,8 @@ public class AdminController : Controller
 
 		string emailTemplate = UJ.Job!.EmailUser!;
 		string emailBodyCandidate = emailTemplate
-				.Replace("[Applicant's Name]", objUser.Name)
-				.Replace("[Job Title]", objJob.JobTitle)
+				.Replace("[Name]", objUser.Name)
+				.Replace("[Job]", objJob.JobTitle)
 				.Replace("[Date]", UJ.DateUserInterview?.ToString("dddd, dd MMM yyy"))
 				.Replace("[Time]", UJ.TimeUserInterview?.ToString("HH:mm"))
 				.Replace("[Location]", UJ.LocationUserInterview);
@@ -661,8 +659,8 @@ public class AdminController : Controller
 
 		string emailTemplate = UJ.Job!.EmailOffering!;
 		string emailBodyCandidate = emailTemplate
-				.Replace("[Applicant's Name]", objUser.Name)
-				.Replace("[Job Title]", objJob.JobTitle);
+				.Replace("[Name]", objUser.Name)
+				.Replace("[Job]", objJob.JobTitle);
 
 		emailMessage.To.Add(new MailboxAddress("", objUser.Email));
 		emailMessage.Subject = $"UPDATE Recruitment for {objJob.JobTitle}";
@@ -701,8 +699,8 @@ public class AdminController : Controller
 
 		string emailTemplate = UJ.Job!.EmailReject!;
 		string emailBody = emailTemplate
-				.Replace("[Applicant's Name]", objUser.Name)
-				.Replace("[Job Title]", jobTitle);
+				.Replace("[Name]", objUser.Name)
+				.Replace("[Job]", jobTitle);
 
 		emailMessage.To.Add(new MailboxAddress("", objUser.Email));
 		emailMessage.Subject = $"UPDATE Recruitment for {jobTitle}";
