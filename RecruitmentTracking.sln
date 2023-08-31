@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecruitmentTracking", "RecruitmentTracking\RecruitmentTracking.csproj", "{5800083A-F0F6-4A8E-9B82-5DB25B442BB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecruitmentTracking.Test", "RecruitmentTracking.Test\RecruitmentTracking.Test.csproj", "{4283D178-48CE-4613-A06C-6BFD2870BC28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{5800083A-F0F6-4A8E-9B82-5DB25B442BB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5800083A-F0F6-4A8E-9B82-5DB25B442BB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5800083A-F0F6-4A8E-9B82-5DB25B442BB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4283D178-48CE-4613-A06C-6BFD2870BC28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4283D178-48CE-4613-A06C-6BFD2870BC28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4283D178-48CE-4613-A06C-6BFD2870BC28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4283D178-48CE-4613-A06C-6BFD2870BC28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
