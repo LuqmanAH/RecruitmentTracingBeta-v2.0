@@ -399,6 +399,7 @@ FodyWeavers.xsd
 
 # misc folder
 .misc/
+
 .vscode/settings.json
 RecruitmentTracking/Data/Database.db
 RecruitmentTracking/bin/Debug/net7.0/RecruitmentTracking.dll
